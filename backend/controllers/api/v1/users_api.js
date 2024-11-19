@@ -315,9 +315,43 @@ module.exports.createJob = async function (req, res) {
 };
 
 module.exports.createMenu = async function (req, res) {
-  // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
+  const { restaurentId, ItemName, quantity, cost, productType } = req.body;
 
-  const { restaurentId, ItemName, quantity, cost } = req.body;
+  if (!restaurentId || !ItemName || cost === undefined || !productType) {
+    return res.status(400).json({
+      error:
+        "restaurentId, ItemName, cost, and productType are required fields.",
+    });
+  }
+
+  if (!Array.isArray(productType) || productType.length === 0) {
+    return res.status(400).json({
+      error: "productType must be a non-empty array.",
+    });
+  }
+
+  const allowedProductTypes = [
+    "Beef",
+    "Pork",
+    "Chicken",
+    "Milk",
+    "Egg",
+    "Vegan",
+    "Vegetarian",
+    "Glutten-Free",
+    "Fish",
+    "Others",
+  ];
+
+  for (const type of productType) {
+    if (!allowedProductTypes.includes(type)) {
+      return res.status(400).json({
+        error: `Invalid product type: ${type}. Allowed types are: ${allowedProductTypes.join(
+          ", "
+        )}.`,
+      });
+    }
+  }
 
   const restaurantUser = await User.findById(restaurentId);
 
@@ -337,6 +371,7 @@ module.exports.createMenu = async function (req, res) {
       ItemName,
       quantity: quantity || 0,
       cost,
+      productType,
     });
 
     const savedMenuItem = await newMenuItem.save();
