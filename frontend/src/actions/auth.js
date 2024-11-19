@@ -15,6 +15,7 @@ import {
 } from './actionTypes'
 import { getFormBody } from '../helpers/utils'
 import { getAuthTokenFromLocalStorage } from '../helpers/utils'
+import toast from 'react-hot-toast'
 // import { fetchUserFriends } from '../actions/friends';
 
 export function startLogin() {
