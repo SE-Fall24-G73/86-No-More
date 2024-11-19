@@ -317,21 +317,33 @@ module.exports.createJob = async function (req, res) {
 module.exports.createMenu = async function (req, res) {
   // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
 
+  const { restaurentId, ItemName, quantity, cost } = req.body;
+
+  const restaurantUser = await User.findById(restaurentId);
+
+  if (!restaurantUser) {
+    return res.status(404).json({ error: "Restaurant not found." });
+  }
+
+  if (restaurantUser.role !== "owner") {
+    return res
+      .status(403)
+      .json({ error: "User is not authorized to create menu items." });
+  }
+
   try {
-    let menu = await Menu.create({
-      restname: req.body.restname,
-      menuname: req.body.menuname,
-      restid: req.body.id,
-      quantity: req.body.quantity,
-      costmenu: req.body.costmenu,
+    const newMenuItem = new Menu({
+      restaurentId,
+      ItemName,
+      quantity: quantity || 0,
+      cost,
     });
 
     return res.json(200, {
       data: {
-        menu: menu,
-        //token: jwt.sign(user.toJSON(), env.jwt_secret, { expiresIn: "100000" })
+        menu: newMenuItem,
       },
-      message: "Menu Created!!",
+      message: `${ItemName} added to Menu Successfully!!`,
       success: true,
     });
   } catch (err) {
