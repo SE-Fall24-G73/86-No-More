@@ -77,7 +77,9 @@ class App extends React.Component {
                 authenticateUser({
                     email: user.email,
                     _id: user._id,
-                    name: user.name,
+                    fullName: user.fullName,
+                    role: user.role,
+                    restuarentName: user.restuarentName,
                 })
             )
             //const users = this.props.auth.user

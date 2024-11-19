@@ -65,9 +65,24 @@ export function login(email, password) {
     }
 }
 
-export function signup(email, password, confirmPassword, name, restname) {
+export function signup(
+    email,
+    password,
+    confirmPassword,
+    fullName,
+    restaurantName,
+    role
+) {
     return (dispatch) => {
         const url = APIURLS.signup()
+        // console.log(
+        //     email,
+        //     password,
+        //     confirmPassword,
+        //     fullName,
+        //     restaurantName,
+        //     role
+        // )
         fetch(url, {
             method: 'POST',
             headers: {
@@ -76,9 +91,10 @@ export function signup(email, password, confirmPassword, name, restname) {
             body: getFormBody({
                 email,
                 password,
-                confirm_password: confirmPassword,
-                name,
-                restname,
+                confirmPassword,
+                fullName,
+                restaurantName,
+                role,
             }),
         })
             .then((response) => response.json())
@@ -87,7 +103,12 @@ export function signup(email, password, confirmPassword, name, restname) {
                 if (data.success) {
                     // do something
                     localStorage.setItem('token', data.data.token)
+
+                    console.log(data.data.user)
+
                     dispatch(signupSuccessful(data.data.user))
+
+                    toast.success('User signed up successfully!')
                     return
                 }
                 dispatch(signupFailed(data.message))
