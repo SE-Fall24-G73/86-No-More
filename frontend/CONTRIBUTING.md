@@ -1,0 +1,62 @@
+# Contributing to 86-No-More!
+The following is a set of guidelines for contributing to 86-No-More. We are open to suggestions to enhance our project.
+
+## Code of Conduct
+
+By participating, you are expected to uphold this code. Please report unacceptable behavior to spendwisebot@gamil.com.
+
+Prerequistes required before starting this project
+
+1. Must be a graduate student at NC State University
+2. Must be a student in Software Engineering Course
+
+## Table of Contents:
+
+## How can I contribute?
+
+<ul>
+  <li><a href="#section1" >Reporting Bugs</a></li>
+  <li><a href="#section2">Suggesting Enhancements</a></li>
+  <li><a href="#section3">Pull Requests</a></li>
+
+</ul>
+ 
+<h3 id="section1"> Reporting bugs</h3>
+<p>This section guides you through submitting a bug report for 86-No-More. </p>
+
+Following these guidelines helps maintainers and the community understand your report, reproduce the behavior and find related reports. When you are creating a bug report, please include as many details as possible to understand the issue.
+
+Before Submitting A Bug Report
+-Check the debugging guide
+-Check the FAQs on the forum for a list of common questions and problems.
+-Determine which repository the problem should be reported in.
+-Perform a cursory search to see if the problem has already been reported.
+  
+  <b>How Do I Submit A Bug Report?</b>
+  Bugs are tracked as GitHub issues. After you've determined which repository your bug is related to, create an issue on that repository.
+  Explain the problem and include additional details to help maintainers reproduce the problem:
+  <ul>
+  <li><b>Use a clear and descriptive title</b> for the issue to identify the problem.</li>
+  <li><b>Provide specific examples to demonstrate the steps.</b> Include links to files or GitHub projects, or copy/pasteable snippets, which you use in those examples. If you're providing snippets in the issue, use Markdown code blocks.</li>
+  <li><b>If the problem is related to performance or memory.</b></li>
+    <li><b>If the problem wasn't triggered by a specific action</b>, describe what you were doing before the problem happened and share more information using the guidelines below.</li>
+  </ul>
+
+<h3 id="section2"> Suggesting Enhancements</h3>
+This section guides you through submitting a suggestion for 86-No-More, including completely new features and minor improvements to existing functionality. 
+
+-Enhancement suggestions are tracked as GitHub issues. 
+-After you've determined which repository your enhancement suggestion is related to, create an issue on that repository and provide the information like title, step-by-step description, specific examples.
+-Giving more detailed information will help us understand the suggestion better. 
+#### Provide details like 
+1) What is the enhancement? 
+2) Suggestions to implement the enhancement
+
+<h3 id="section3"> Pull Requests</h3>
+
+The process described here has several goals:
+
+- Maintain 86-No-More quality 
+- Fix problems that are important to users 
+- Engage the community in working toward the best possible 86-No-More 
+- Enable a sustainable system for 86-No-More's maintainers to review contributions
