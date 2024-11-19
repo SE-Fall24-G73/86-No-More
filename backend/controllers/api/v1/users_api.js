@@ -339,9 +339,11 @@ module.exports.createMenu = async function (req, res) {
       cost,
     });
 
+    const savedMenuItem = await newMenuItem.save();
+
     return res.json(200, {
       data: {
-        menu: newMenuItem,
+        menu: savedMenuItem,
       },
       message: `${ItemName} added to Menu Successfully!!`,
       success: true,
