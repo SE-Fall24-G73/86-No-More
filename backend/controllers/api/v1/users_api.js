@@ -343,16 +343,39 @@ module.exports.createJob = async function (req, res) {
 };
 
 module.exports.createMenu = async function (req, res) {
-  const { restaurentId, ItemName, quantity, cost, productType } = req.body;
+  const {
+    restaurantName,
+    restaurantId,
+    itemName,
+    quantity,
+    cost,
+    productType,
+  } = req.body;
 
-  if (!restaurentId || !ItemName || cost === undefined || !productType) {
+  console.log(req.body);
+
+  // Ensure productType is an array
+  let processedProductType = Array.isArray(productType)
+    ? productType
+    : productType.split(",").map((type) => type.trim());
+
+  if (
+    !restaurantName ||
+    !restaurantId ||
+    !itemName ||
+    cost === undefined ||
+    !processedProductType
+  ) {
     return res.status(400).json({
       error:
-        "restaurentId, ItemName, cost, and productType are required fields.",
+        "restaurantName, restaurantId, itemName, cost, and productType are required fields.",
     });
   }
 
-  if (!Array.isArray(productType) || productType.length === 0) {
+  if (
+    !Array.isArray(processedProductType) ||
+    processedProductType.length === 0
+  ) {
     return res.status(400).json({
       error: "productType must be a non-empty array.",
     });
@@ -371,7 +394,7 @@ module.exports.createMenu = async function (req, res) {
     "Others",
   ];
 
-  for (const type of productType) {
+  for (const type of processedProductType) {
     if (!allowedProductTypes.includes(type)) {
       return res.status(400).json({
         error: `Invalid product type: ${type}. Allowed types are: ${allowedProductTypes.join(
@@ -381,7 +404,7 @@ module.exports.createMenu = async function (req, res) {
     }
   }
 
-  const restaurantUser = await User.findById(restaurentId);
+  const restaurantUser = await User.findById(restaurantId);
 
   if (!restaurantUser) {
     return res.status(404).json({ error: "Restaurant not found." });
@@ -395,26 +418,29 @@ module.exports.createMenu = async function (req, res) {
 
   try {
     const newMenuItem = new Menu({
-      restaurentId,
-      ItemName,
+      restaurantName: restaurantName,
+      restaurantId: restaurantId,
+      itemName: itemName,
       quantity: quantity || 0,
       cost,
-      productType,
+      productType: processedProductType, // Use the processed array
     });
 
     const savedMenuItem = await newMenuItem.save();
 
-    return res.json(200, {
+    console.log(savedMenuItem);
+
+    return res.json({
       data: {
         menu: savedMenuItem,
       },
-      message: `${ItemName} added to Menu Successfully!!`,
+      message: `${itemName} added to Menu Successfully!!`,
       success: true,
     });
   } catch (err) {
     console.log(err);
 
-    return res.json(500, {
+    return res.status(500).json({
       message: "NOT CREATED",
     });
   }

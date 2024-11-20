@@ -8,11 +8,11 @@ import { clearAuthState, editItem } from '../actions/auth'
 import { createJob, fetchJobs, createMenu } from '../actions/job'
 
 const Menu = () => {
-    const [restname, setRestname] = useState('')
-    const [restid, setRestid] = useState('')
-    const [menuname, setMenuname] = useState('')
+    const [restaurantName, setRestaurantName] = useState('')
+    const [restaurantNameId, setRestaurantId] = useState('')
+    const [itemName, setItemName] = useState('')
     const [quantity, setQuantity] = useState('0')
-    const [costmenu, setCostmenu] = useState('')
+    const [cost, setCost] = useState('')
     const [selectedProductTypes, setSelectedProductTypes] = useState([])
     const [editMode, setEditMode] = useState(false)
 
@@ -39,20 +39,20 @@ const Menu = () => {
 
     const handleSave1 = () => {
         const { user } = auth
-        console.log(menuname)
-        dispatch(editItem(menuname, quantity))
+        console.log(itemName)
+        dispatch(editItem(itemName, quantity))
     }
 
     const handleInputChange = (fieldName, val) => {
         switch (fieldName) {
-            case 'menuname':
-                setMenuname(val)
+            case 'itemName':
+                setItemName(val)
                 break
             case 'quantity':
                 setQuantity(val)
                 break
-            case 'costmenu':
-                setCostmenu(val)
+            case 'cost':
+                setCost(val)
                 break
             default:
                 break
@@ -60,26 +60,29 @@ const Menu = () => {
     }
 
     const handleProductTypeChange = (selectedOptions) => {
-        setSelectedProductTypes(selectedOptions.map((option) => option.value))
-        console.log(selectedProductTypes)
+        const updatedTypes = selectedOptions
+            ? selectedOptions.map((option) => option.value)
+            : []
+        setSelectedProductTypes(updatedTypes)
+        console.log('Selected Product Types:', updatedTypes)
     }
 
     const handleSave = () => {
         const { user } = auth
-        setRestname(user.restname)
-        setRestid(user._id)
+        setRestaurantName(user.restaurantName)
+        setRestaurantId(user._id)
 
         dispatch(
             createMenu(
-                user.restname,
+                user.restaurantName,
                 user._id,
-                menuname,
+                itemName,
                 quantity,
-                costmenu,
+                cost,
                 selectedProductTypes
             )
         )
-        alert(`${menuname} added!`)
+        alert(`${itemName} added!`)
     }
 
     const { error } = auth
@@ -103,7 +106,7 @@ const Menu = () => {
                         type="text"
                         required
                         onChange={(e) =>
-                            handleInputChange('menuname', e.target.value)
+                            handleInputChange('itemName', e.target.value)
                         }
                     />
                 </div>
@@ -127,7 +130,7 @@ const Menu = () => {
                         type="text"
                         required
                         onChange={(e) =>
-                            handleInputChange('costmenu', e.target.value)
+                            handleInputChange('cost', e.target.value)
                         }
                     />
                 </div>

@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast'
 import { APIURLS } from '../helpers/urls'
 import { getFormBody } from '../helpers/utils'
 import {
@@ -81,7 +82,14 @@ export function deleteInventoryItem(id) {
     }
 }
 
-export function createMenu(restname, restid, menuname, quantity, costmenu, selectedProductTypes) {
+export function createMenu(
+    restaurantName,
+    restaurantId,
+    itemName,
+    quantity,
+    cost,
+    selectedProductTypes
+) {
     return (dispatch) => {
         const url = APIURLS.createMenu()
         fetch(url, {
@@ -90,12 +98,12 @@ export function createMenu(restname, restid, menuname, quantity, costmenu, selec
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: getFormBody({
-                restname,
-                id: restid,
-                menuname,
-                quantity,
-                costmenu,
-                selectedProductTypes
+                restaurantName: restaurantName,
+                restaurantId: restaurantId,
+                itemName: itemName,
+                quantity: quantity,
+                cost: cost,
+                productType: selectedProductTypes,
             }),
         })
             .then((response) => response.json())
@@ -103,6 +111,7 @@ export function createMenu(restname, restid, menuname, quantity, costmenu, selec
                 // console.log('data', data);
                 if (data.success) {
                     // do something
+                    toast.success(data.message)
                     localStorage.setItem('token', data.data.token)
                     dispatch(menuSuccess(data.data.menu))
                     return
@@ -219,7 +228,7 @@ export function fetchReductionEstimate() {
                 console.log('HERE2', data)
                 dispatch(updateReductionEstimate(data.reductions))
             })
-        }
+    }
 }
 
 export function fetchMenus() {
