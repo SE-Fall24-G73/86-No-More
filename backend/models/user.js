@@ -1,31 +1,32 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: [true, "Email is required"],
+      unique: [true, "Email already exists"],
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: [true, "Password is required"],
     },
-    name: {
-        type: String,
-        required: true
+    fullName: {
+      type: String,
+      required: [true, "fullName is required"],
     },
-    restname: {
-        type: String,
-        required: true
+    restaurantName: {
+      type: String,
     },
-    
+    role: {
+      type: String,
+      enum: ["owner", "customer", "staff"],
+      default: "customer",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-}, {
-    timestamps: true
-});
-
-
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+module.exports = mongoose.model("User", userSchema);

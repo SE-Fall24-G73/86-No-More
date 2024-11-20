@@ -1,14 +1,13 @@
 const User = require("../../../models/user");
 const jwt = require("jsonwebtoken");
 const Food = require("../../../models/food");
-const History = require('../../../models/history');
-const Job = require('../../../models/job');
-const Application = require('../../../models/application');
+const History = require("../../../models/history");
+const Job = require("../../../models/job");
+const Application = require("../../../models/application");
 const Inventory = require("../../../models/inventory");
 const Menu = require("../../../models/menu");
 const Inventoryhistory = require("../../../models/inventoryhistory");
 const Reduction = require("../../../models/reduction");
-
 
 module.exports.createSession = async function (req, res) {
   try {
@@ -36,32 +35,24 @@ module.exports.createSession = async function (req, res) {
   }
 };
 
-
 module.exports.createHistory = async function (req, res) {
   try {
-  
-        let history = await History.create({
-          date: req.body.date,
-          caloriesgain: req.body.total,
-          caloriesburn: req.body.burnout,
-          user:req.body.id
+    let history = await History.create({
+      date: req.body.date,
+      caloriesgain: req.body.total,
+      caloriesburn: req.body.burnout,
+      user: req.body.id,
+    });
 
-        });
-          
+    return res.json(200, {
+      message: "History Created Successfully",
 
-          return res.json(200, {
-            message: "History Created Successfully",
-
-            data: {
-              
-              history:history,
-            },
-            success: true,
-          });
-        ;
-      }
-    
-   catch (err) {
+      data: {
+        history: history,
+      },
+      success: true,
+    });
+  } catch (err) {
     console.log(err);
 
     return res.json(500, {
@@ -70,18 +61,51 @@ module.exports.createHistory = async function (req, res) {
   }
 };
 
-
-
 module.exports.signUp = async function (req, res) {
   try {
-    if (req.body.password != req.body.confirm_password) {
+    const { email, confirmPassword, password, fullName, restaurantName, role } =
+      req.body;
+
+    console.log(
+      email,
+      confirmPassword,
+      password,
+      fullName,
+      restaurantName,
+      role
+    );
+
+    if (
+      !email ||
+      !password ||
+      !fullName ||
+      !role ||
+      !password ||
+      !confirmPassword
+    ) {
+      return res.json(422, {
+        message: "All fields are required",
+      });
+    }
+
+    if (password !== confirmPassword) {
       return res.json(422, {
         message: "Passwords donot match",
       });
     }
 
-    User.findOne({ email: req.body.email }, function (err, user) {
+    if (role === "owner") {
+      if (!restaurantName) {
+        return res.json(422, {
+          message: "Restaurant Name is required",
+        });
+      }
+    }
+
+    User.findOne({ email: email }, function (err, user) {
       if (user) {
+        console.log(user);
+
         return res.json(200, {
           message: "Sign Up Successful, here is your token, plz keep it safe",
 
@@ -98,7 +122,17 @@ module.exports.signUp = async function (req, res) {
       }
 
       if (!user) {
-        let user = User.create(req.body, function (err, user) {
+        const userData = {
+          email: email,
+          password: password,
+          fullName: fullName,
+          restaurantName: restaurantName,
+          role: role,
+        };
+
+        let user = User.create(userData, function (err, user) {
+          console.log(err);
+
           if (err) {
             return res.json(500, {
               message: "Internal Server Error",
@@ -107,17 +141,19 @@ module.exports.signUp = async function (req, res) {
 
           // let userr = User.findOne({ email: req.body.email });
 
+          // console.log(user);
+
           return res.json(200, {
             message: "Sign Up Successful, here is your token, plz keep it safe",
 
             data: {
               //user.JSON() part gets encrypted
-
               token: jwt.sign(user.toJSON(), "caloriesapp", {
                 expiresIn: "100000",
               }),
               user,
             },
+            "message ": "User Created Successfully!",
             success: true,
           });
         });
@@ -135,7 +171,6 @@ module.exports.signUp = async function (req, res) {
     });
   }
 };
-
 module.exports.editProfile = async function (req, res) {
   if (req.body.password == req.body.confirm_password) {
     try {
@@ -143,7 +178,7 @@ module.exports.editProfile = async function (req, res) {
 
       user.name = req.body.name;
       user.password = req.body.password;
-      
+
       user.save();
 
       return res.json(200, {
@@ -173,55 +208,55 @@ module.exports.editProfile = async function (req, res) {
   }
 };
 
-
 module.exports.editItem = async function (req, res) {
-  
-    try {
-     
-      let inventory = await Inventory.findOne({itemname: new RegExp('^'+req.body.itemname+'$', "i")});
+  try {
+    let inventory = await Inventory.findOne({
+      itemname: new RegExp("^" + req.body.itemname + "$", "i"),
+    });
 
-      let inventoryhistory = await Inventoryhistory.findOne({itemname: new RegExp('^'+req.body.itemname+'$', "i")});
+    let inventoryhistory = await Inventoryhistory.findOne({
+      itemname: new RegExp("^" + req.body.itemname + "$", "i"),
+    });
 
+    let reduction = await Reduction.findOne({
+      metric: new RegExp("^" + req.body.metric + "$", "i"),
+    });
 
-      let reduction = await Reduction.findOne({metric: new RegExp('^'+req.body.metric+'$', "i")});
+    let oldquantity = inventoryhistory.quantity;
 
-      let oldquantity = inventoryhistory.quantity;
+    reduction.amount = oldquantity - req.body.quantity;
 
-      reduction.amount = oldquantity - req.body.quantity;
+    inventoryhistory.quantity = req.body.quantity;
+    inventoryhistory.metric = req.body.metric;
 
-      inventoryhistory.quantity = req.body.quantity;
-      inventoryhistory.metric = req.body.metric;
+    reduction.save();
+    // inventory.save();
+    inventoryhistory.save();
 
-      
-      reduction.save();
-      // inventory.save();
-      inventoryhistory.save();
+    let inventories = await Inventory.find({}).sort("-createdAt");
 
-      let inventories = await Inventory.find({}).sort("-createdAt");
+    return res.json(200, {
+      message: "User is updated Successfully",
 
-      return res.json(200, {
-        message: "User is updated Successfully",
+      data: {
+        //user.JSON() part gets encrypted
 
-        data: {
-          //user.JSON() part gets encrypted
+        // token: jwt.sign(user.toJSON(), env.jwt_secret, {
+        //   expiresIn: "100000",
+        // }),
+        inventories,
+      },
+      success: true,
+    });
+  } catch (err) {
+    console.log(err);
 
-          // token: jwt.sign(user.toJSON(), env.jwt_secret, {
-          //   expiresIn: "100000",
-          // }),
-          inventories,
-        },
-        success: true,
-      });
-    } catch (err) {
-      console.log(err);
+    return res.json(500, {
+      message: "Internal Server Error",
+    });
+  }
+};
 
-      return res.json(500, {
-        message: "Internal Server Error",
-      });
-    }
-  } ;
-  
-;
 module.exports.searchUser = async function (req, res) {
   try {
     var regex = new RegExp(req.params.name, "i");
@@ -248,10 +283,12 @@ module.exports.searchUser = async function (req, res) {
   }
 };
 
-
 module.exports.getHistory = async function (req, res) {
   try {
-    let history = await History.findOne({user:req.query.id,date:req.query.date});
+    let history = await History.findOne({
+      user: req.query.id,
+      date: req.query.date,
+    });
 
     return res.json(200, {
       message: "The User Profile",
@@ -273,20 +310,19 @@ module.exports.getHistory = async function (req, res) {
   }
 };
 
-
 module.exports.createJob = async function (req, res) {
   // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
-  
+
   try {
     let job = await Inventory.create({
       restname: req.body.restname,
       itemname: req.body.itemname,
       metric: req.body.metric,
-      restid:req.body.id,
-      quantity:req.body.quantity,
-      costperitem:req.body.costperitem,
-      datebought:req.body.datebought,
-      dateexpired:req.body.dateexpired,
+      restid: req.body.id,
+      quantity: req.body.quantity,
+      costperitem: req.body.costperitem,
+      datebought: req.body.datebought,
+      dateexpired: req.body.dateexpired,
     });
 
     return res.json(200, {
@@ -307,30 +343,104 @@ module.exports.createJob = async function (req, res) {
 };
 
 module.exports.createMenu = async function (req, res) {
-  // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
-  
+  const {
+    restaurantName,
+    restaurantId,
+    itemName,
+    quantity,
+    cost,
+    productType,
+  } = req.body;
+
+  console.log(req.body);
+
+  // Ensure productType is an array
+  let processedProductType = Array.isArray(productType)
+    ? productType
+    : productType.split(",").map((type) => type.trim());
+
+  if (
+    !restaurantName ||
+    !restaurantId ||
+    !itemName ||
+    cost === undefined ||
+    !processedProductType
+  ) {
+    return res.status(400).json({
+      error:
+        "restaurantName, restaurantId, itemName, cost, and productType are required fields.",
+    });
+  }
+
+  if (
+    !Array.isArray(processedProductType) ||
+    processedProductType.length === 0
+  ) {
+    return res.status(400).json({
+      error: "productType must be a non-empty array.",
+    });
+  }
+
+  const allowedProductTypes = [
+    "Beef",
+    "Pork",
+    "Chicken",
+    "Milk",
+    "Egg",
+    "Vegan",
+    "Vegetarian",
+    "Glutten-Free",
+    "Fish",
+    "Others",
+  ];
+
+  for (const type of processedProductType) {
+    if (!allowedProductTypes.includes(type)) {
+      return res.status(400).json({
+        error: `Invalid product type: ${type}. Allowed types are: ${allowedProductTypes.join(
+          ", "
+        )}.`,
+      });
+    }
+  }
+
+  const restaurantUser = await User.findById(restaurantId);
+
+  if (!restaurantUser) {
+    return res.status(404).json({ error: "Restaurant not found." });
+  }
+
+  if (restaurantUser.role !== "owner") {
+    return res
+      .status(403)
+      .json({ error: "User is not authorized to create menu items." });
+  }
+
   try {
-    let menu = await Menu.create({
-      restname: req.body.restname,
-      menuname: req.body.menuname,
-      restid:req.body.id,
-      quantity:req.body.quantity,
-      costmenu:req.body.costmenu,
-      
+    const newMenuItem = new Menu({
+      restaurantName: restaurantName,
+      restaurantId: restaurantId,
+      itemName: itemName,
+      quantity: quantity || 0,
+      cost,
+      productType: processedProductType, // Use the processed array
     });
 
-    return res.json(200, {
+    const savedMenuItem = await newMenuItem.save();
+
+    console.log(savedMenuItem);
+
+    return res.json({
       data: {
-        menu: menu,
-        //token: jwt.sign(user.toJSON(), env.jwt_secret, { expiresIn: "100000" })
+        menu: savedMenuItem,
       },
-      message: "Menu Created!!",
+      message: `${itemName} added to Menu Successfully!!`,
       success: true,
     });
   } catch (err) {
     console.log(err);
 
-    return res.json(500, {
+    return res.status(500).json({
       message: "NOT CREATED",
     });
   }
@@ -338,11 +448,13 @@ module.exports.createMenu = async function (req, res) {
 
 module.exports.deleteMenu = async function (req, res) {
   try {
-    console.log("Inside delete func")
+    console.log("Inside delete func");
     const menuName = req.body.id; // Get the menu ID from the request parameters
-    console.log("Menuitem "+menuName);
+    console.log("Menuitem " + menuName);
     // Check if the menu item with the provided ID exists
-    const menu = await Menu.findOne({menuname: new RegExp('^'+menuName+'$', "i")});
+    const menu = await Menu.findOne({
+      menuname: new RegExp("^" + menuName + "$", "i"),
+    });
 
     if (!menu) {
       return res.status(404).json({
@@ -374,11 +486,13 @@ module.exports.deleteMenu = async function (req, res) {
 
 module.exports.deleteInventoryItem = async function (req, res) {
   try {
-    console.log("Inside delete func")
+    console.log("Inside delete func");
     const itemName = req.body.id; // Get the menu ID from the request parameters
-    console.log("Inventory item "+itemName);
+    console.log("Inventory item " + itemName);
     // Check if the item with the provided ID exists
-    const item = await Inventory.findOne({itemname: new RegExp('^'+itemName+'$', "i")});
+    const item = await Inventory.findOne({
+      itemname: new RegExp("^" + itemName + "$", "i"),
+    });
 
     if (!item) {
       return res.status(404).json({
@@ -408,7 +522,6 @@ module.exports.deleteInventoryItem = async function (req, res) {
   }
 };
 
-
 module.exports.index = async function (req, res) {
   let jobs = await Inventory.find({}).sort("-createdAt");
 
@@ -434,34 +547,41 @@ module.exports.fetchApplication = async function (req, res) {
 };
 
 module.exports.fetchMenu = async function (req, res) {
-  let menu = await Menu.find({}).sort("-createdAt");
+  const restaurantId = req.body.restaurantId;
+
+  // console.log("Fetching application", restaurantId);
+
+  let menu = await Menu.find({ restaurantId: restaurantId }).sort("-createdAt");
+
+  console.log(menu);
 
   //Whenever we want to send back JSON data
 
   return res.json(200, {
     message: "List of Menus",
-
     menu: menu,
   });
 };
 
 module.exports.createInventoryHistory = async function (req, res) {
   // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
-  
+
   try {
     let inventoryhistory = await Inventoryhistory.create({
       itemname: req.body.itemname,
-      quantity:req.body.quantity,
-      metric:req.body.metric
+      quantity: req.body.quantity,
+      metric: req.body.metric,
     });
 
-    let reduction = await Reduction.findOne({metric: new RegExp('^'+req.body.metric+'$', "i")});
+    let reduction = await Reduction.findOne({
+      metric: new RegExp("^" + req.body.metric + "$", "i"),
+    });
 
     reduction.total = reduction.total + Number(req.body.quantity);
 
     await reduction.save();
 
-    console.log(reduction)
+    console.log(reduction);
 
     console.log(inventoryhistory);
     return res.json(200, {
@@ -485,7 +605,7 @@ module.exports.fetchInventoryHistory = async function (req, res) {
   //let inventoryhistory = await Inventoryhistory.findOne({itemname: new RegExp('^'+req.body.itemname+'$', "i")});
   let inventoryhistory = await Inventoryhistory.find({});
   //Whenever we want to send back JSON data
-console.log(inventoryhistory);
+  console.log(inventoryhistory);
   return res.json(200, {
     message: "List of InventoryHistory",
 
@@ -508,7 +628,7 @@ module.exports.fetchReductionEstimate = async function (req, res) {
 
 module.exports.resetReduction = async function (req, res) {
   // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
-  
+
   try {
     await Reduction.deleteMany({});
 
@@ -604,11 +724,9 @@ module.exports.acceptApplication = async function (req, res) {
 
     return res.json(500, {
       message: "Internal Server Error",
-      
     });
   }
 };
-
 
 module.exports.rejectApplication = async function (req, res) {
   try {
@@ -639,7 +757,6 @@ module.exports.rejectApplication = async function (req, res) {
     });
   }
 };
-
 
 module.exports.closeJob = async function (req, res) {
   try {

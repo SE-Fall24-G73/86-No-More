@@ -11,7 +11,7 @@ class Settings extends Component {
             password: '',
             confirmPassword: '',
             editMode: false,
-            restname: '',
+            restaurantName: '',
         }
     }
 
@@ -56,7 +56,7 @@ class Settings extends Component {
 
                 <div className="field">
                     <div className="field-label">Restaurant Name</div>
-                    <div className="field-value">{user.restname}</div>
+                    <div className="field-value">{user.restaurantName}</div>
                 </div>
 
                 <div className="field">
@@ -70,7 +70,7 @@ class Settings extends Component {
                             value={this.state.name}
                         />
                     ) : (
-                        <div className="field-value">{user.name}</div>
+                        <div className="field-value">{user.fullName}</div>
                     )}
                 </div>
 
