@@ -33,6 +33,8 @@ import { fetchJobs, fetchMenus } from '../actions/job'
 import Cart from './Cart'
 import Ratings from './Ratings'
 import Awareness from './Awareness'
+import CaloryDetector from './CaloryDetector'
+import HealthAdvisor from './HealthAdvisor'
 
 const PrivateRoute = (privateRouteProps) => {
     const { isLoggedIn, path, component: Component } = privateRouteProps
@@ -156,6 +158,16 @@ class App extends React.Component {
                         <PrivateRoute
                             path="/menu"
                             component={Menu}
+                            isLoggedIn={auth.isLoggedIn}
+                        />
+                        <PrivateRoute
+                            path="/caloryDetector"
+                            component={CaloryDetector}
+                            isLoggedIn={auth.isLoggedIn}
+                        />
+                        <PrivateRoute
+                            path="/healthAdvisor"
+                            component={HealthAdvisor}
                             isLoggedIn={auth.isLoggedIn}
                         />
                         <Route component={Page404} />
