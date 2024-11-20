@@ -74,6 +74,14 @@ export function signup(
     restaurantName,
     role
 ) {
+    console.log(
+        email,
+        password,
+        confirmPassword,
+        fullName,
+        restaurantName,
+        role
+    )
     return (dispatch) => {
         const url = APIURLS.signup()
         // console.log(
@@ -90,12 +98,12 @@ export function signup(
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: getFormBody({
-                email,
-                password,
-                confirmPassword,
-                fullName,
-                restaurantName,
-                role,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword,
+                fullName: fullName,
+                restaurantName: restaurantName,
+                role: role,
             }),
         })
             .then((response) => response.json())
@@ -105,7 +113,7 @@ export function signup(
                     // do something
                     localStorage.setItem('token', data.data.token)
 
-                    console.log(data.data.user)
+                    // console.log(data.data.user)
 
                     dispatch(signupSuccessful(data.data.user))
 

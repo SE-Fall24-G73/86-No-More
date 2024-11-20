@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "fullName is required"],
     },
-    restaurentName: {
+    restaurantName: {
       type: String,
     },
     role: {

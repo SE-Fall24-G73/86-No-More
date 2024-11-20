@@ -39,13 +39,8 @@ const Signup = () => {
             return
         }
 
-        if (
-            email &&
-            password &&
-            confirmPassword &&
-            fullName &&
-            (role !== 'restaurant owner' || restaurantName)
-        ) {
+        if (email && password && confirmPassword && fullName && role) {
+            console.log(restaurantName)
             dispatch(startSingup())
             dispatch(
                 signup(

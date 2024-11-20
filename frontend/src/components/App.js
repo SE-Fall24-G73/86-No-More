@@ -79,7 +79,7 @@ class App extends React.Component {
                     _id: user._id,
                     fullName: user.fullName,
                     role: user.role,
-                    restuarentName: user.restuarentName,
+                    restaurantName: user.restaurantName,
                 })
             )
             //const users = this.props.auth.user

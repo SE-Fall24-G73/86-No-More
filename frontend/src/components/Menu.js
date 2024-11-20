@@ -1,154 +1,138 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import Select from 'react-select'; 
-import { searchUsers } from '../actions/search'
+// Menu.js
+
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import Select from 'react-select'
+import { searchUsers, clearsearchstate } from '../actions/search'
 import { clearAuthState, editItem } from '../actions/auth'
-import { clearsearchstate } from '../actions/search'
+import { createJob, fetchJobs, createMenu } from '../actions/job'
 
-import Widgets from './Widgets.js'
-import { createJob } from '../actions/job'
-import { fetchJobs, createMenu } from '../actions/job'
-import Job1 from './Job1'
+const Menu = () => {
+    const [restname, setRestname] = useState('')
+    const [restid, setRestid] = useState('')
+    const [menuname, setMenuname] = useState('')
+    const [quantity, setQuantity] = useState('0')
+    const [costmenu, setCostmenu] = useState('')
+    const [selectedProductTypes, setSelectedProductTypes] = useState([])
+    const [editMode, setEditMode] = useState(false)
 
-class Menu extends Component {
-    constructor(props) {
-        super(props)
+    const dispatch = useDispatch()
+    const auth = useSelector((state) => state.auth)
+    const menu = useSelector((state) => state.menu)
+    const job = useSelector((state) => state.job)
+    const results = useSelector((state) => state.search.results)
 
-        this.state = {
-            restname: '',
-            restid: '',
-            menuname: '',
-            quantity: '0',
-            costmenu: '',
-            selectedProductTypes: [],
-            editMode: false,
+    useEffect(() => {
+        dispatch(fetchJobs())
+        // Cleanup function equivalent to componentWillUnmount
+        return () => {
+            dispatch(clearsearchstate([]))
+            console.log('UNMOUNT')
+        }
+    }, [dispatch])
+
+    const handleSearch = (e) => {
+        const searchText = e.target.value
+        console.log(searchText)
+        dispatch(searchUsers(searchText))
+    }
+
+    const handleSave1 = () => {
+        const { user } = auth
+        console.log(menuname)
+        dispatch(editItem(menuname, quantity))
+    }
+
+    const handleInputChange = (fieldName, val) => {
+        switch (fieldName) {
+            case 'menuname':
+                setMenuname(val)
+                break
+            case 'quantity':
+                setQuantity(val)
+                break
+            case 'costmenu':
+                setCostmenu(val)
+                break
+            default:
+                break
         }
     }
 
-    handleSearch = (e) => {
-        const searchText = e.target.value
-        console.log(searchText)
-
-        this.props.dispatch(searchUsers(searchText))
-    }
-    handleSave1 = () => {
-        const {
-            restname,
-            restid,
-            itemname,
-            quantity,
-            costperitem,
-            datebought,
-            dateexpired,
-        } = this.state
-
-        const { user } = this.props.auth
-        const { job } = this.props
-        console.log(itemname)
-
-        this.props.dispatch(editItem(itemname, quantity))
+    const handleProductTypeChange = (selectedOptions) => {
+        setSelectedProductTypes(selectedOptions.map((option) => option.value))
+        console.log(selectedProductTypes)
     }
 
-    clearSearch = () => {
-        this.props.dispatch(clearsearchstate([]))
-        console.log('UNMOUNT')
-    }
+    const handleSave = () => {
+        const { user } = auth
+        setRestname(user.restname)
+        setRestid(user._id)
 
-    handleInputChange = (fieldName, val) => {
-        this.setState({
-            [fieldName]: val,
-        })
-    }
-
-    handleProductTypeChange = (selectedOptions) => {
-        this.setState({
-            selectedProductTypes: selectedOptions.map(option => option.value),
-        });
-        console.log(this.selectedProductTypes);
-    }
-
-    handleSave = () => {
-        const { restname, restid, menuname, quantity, costmenu, selectedProductTypes } = this.state
-
-        const { user } = this.props.auth
-
-        this.setState({
-            restname: user.restname,
-            restid: user._id,
-        })
-
-        this.props.dispatch(
-            createMenu(user.restname, user._id, menuname, quantity, costmenu, selectedProductTypes)
+        dispatch(
+            createMenu(
+                user.restname,
+                user._id,
+                menuname,
+                quantity,
+                costmenu,
+                selectedProductTypes
+            )
         )
-        alert(menuname + ' added!')
-    }
-    componentDidMount() {
-        this.props.dispatch(fetchJobs())
+        alert(`${menuname} added!`)
     }
 
-    render() {
-        const { error } = this.props.auth
+    const { error } = auth
 
-        const { menu } = this.props
+    return (
+        <div>
+            <div
+                className="goal-form"
+                style={{
+                    width: '650px',
+                    height: '300px',
+                    marginLeft: '100px',
+                }}
+            >
+                <span className="login-signup-header">Add Menu Item</span>
+                {error && <div className="alert error-dailog">{error}</div>}
 
-        return (
-            <div>
-                <div
-                    className="goal-form"
-                    style={{
-                        width: '650px',
-                        height: '300px',
-                        marginLeft: '100px',
-                    }}
-                >
-                    <span className="login-signup-header">Add Menu Item</span>
-                    {error && <div className="alert error-dailog">{error}</div>}
+                <div className="field">
+                    <input
+                        placeholder="Item Name"
+                        type="text"
+                        required
+                        onChange={(e) =>
+                            handleInputChange('menuname', e.target.value)
+                        }
+                    />
+                </div>
 
-                    <div className="field">
-                        <input
-                            placeholder="Item Name"
-                            type="text"
-                            required
-                            onChange={(e) =>
-                                this.handleInputChange(
-                                    'menuname',
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </div>
+                <div className="field">
+                    <input
+                        id="quan"
+                        placeholder="Quantity"
+                        type="text"
+                        required
+                        onChange={(e) =>
+                            handleInputChange('quantity', e.target.value)
+                        }
+                    />
+                </div>
 
-                    <div className="field">
-                        <input
-                            id="quan"
-                            placeholder="Quantity"
-                            type="text"
-                            required
-                            onChange={(e) =>
-                                this.handleInputChange(
-                                    'quantity',
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </div>
+                <div className="field">
+                    <input
+                        id="cost"
+                        placeholder="Price"
+                        type="text"
+                        required
+                        onChange={(e) =>
+                            handleInputChange('costmenu', e.target.value)
+                        }
+                    />
+                </div>
 
-                    <div className="field">
-                        <input
-                            id="cost"
-                            placeholder="Price"
-                            type="text"
-                            required
-                            onChange={(e) =>
-                                this.handleInputChange(
-                                    'costmenu',
-                                    e.target.value
-                                )
-                            }
-                        />
-                    </div>
-
-                    <div className="field">
+                <div className="field">
                     <label>Select Product Types:</label>
                     <Select
                         isMulti
@@ -162,33 +146,20 @@ class Menu extends Component {
                             { value: 'Vegetarian', label: 'Vegetarian' },
                             { value: 'Glutten-Free', label: 'Glutten-Free' },
                             { value: 'Fish', label: 'Fish' },
-                            { value: 'Others', label: 'Others'}
+                            { value: 'Others', label: 'Others' },
                         ]}
-                        onChange={this.handleProductTypeChange}
+                        onChange={handleProductTypeChange}
                     />
                 </div>
 
-                    <div className="field">
-                        <button
-                            className="button save-btn"
-                            onClick={this.handleSave}
-                        >
-                            Save
-                        </button>
-                    </div>
+                <div className="field">
+                    <button className="button save-btn" onClick={handleSave}>
+                        Save
+                    </button>
                 </div>
             </div>
-        )
-    }
+        </div>
+    )
 }
 
-function mapStateToProps(state) {
-    return {
-        auth: state.auth,
-        results: state.search.results,
-        job: state.job,
-        menu: state.menu,
-    }
-}
-
-export default connect(mapStateToProps)(Menu)
+export default Menu

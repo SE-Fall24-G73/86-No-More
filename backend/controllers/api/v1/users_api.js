@@ -63,8 +63,30 @@ module.exports.createHistory = async function (req, res) {
 
 module.exports.signUp = async function (req, res) {
   try {
-    const { email, confirmPassword, password, fullName, restaurentName, role } =
+    const { email, confirmPassword, password, fullName, restaurantName, role } =
       req.body;
+
+    console.log(
+      email,
+      confirmPassword,
+      password,
+      fullName,
+      restaurantName,
+      role
+    );
+
+    if (
+      !email ||
+      !password ||
+      !fullName ||
+      !role ||
+      !password ||
+      !confirmPassword
+    ) {
+      return res.json(422, {
+        message: "All fields are required",
+      });
+    }
 
     if (password !== confirmPassword) {
       return res.json(422, {
@@ -72,7 +94,13 @@ module.exports.signUp = async function (req, res) {
       });
     }
 
-    console.log(req.body);
+    if (role === "owner") {
+      if (!restaurantName) {
+        return res.json(422, {
+          message: "Restaurant Name is required",
+        });
+      }
+    }
 
     User.findOne({ email: email }, function (err, user) {
       if (user) {
@@ -98,7 +126,7 @@ module.exports.signUp = async function (req, res) {
           email: email,
           password: password,
           fullName: fullName,
-          restaurentName: restaurentName,
+          restaurantName: restaurantName,
           role: role,
         };
 
@@ -113,7 +141,7 @@ module.exports.signUp = async function (req, res) {
 
           // let userr = User.findOne({ email: req.body.email });
 
-          console.log(user);
+          // console.log(user);
 
           return res.json(200, {
             message: "Sign Up Successful, here is your token, plz keep it safe",
