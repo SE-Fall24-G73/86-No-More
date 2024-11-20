@@ -547,13 +547,18 @@ module.exports.fetchApplication = async function (req, res) {
 };
 
 module.exports.fetchMenu = async function (req, res) {
-  let menu = await Menu.find({}).sort("-createdAt");
+  const restaurantId = req.body.restaurantId;
+
+  // console.log("Fetching application", restaurantId);
+
+  let menu = await Menu.find({ restaurantId: restaurantId }).sort("-createdAt");
+
+  console.log(menu);
 
   //Whenever we want to send back JSON data
 
   return res.json(200, {
     message: "List of Menus",
-
     menu: menu,
   });
 };

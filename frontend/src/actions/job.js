@@ -12,6 +12,8 @@ import {
     DELETE_INVENTORY_ITEM,
     FETCH_REDUCTION,
 } from './actionTypes'
+import auth from '../reducers/auth'
+import { useSelector } from 'react-redux'
 
 export function createJob(
     restname,
@@ -231,11 +233,21 @@ export function fetchReductionEstimate() {
     }
 }
 
-export function fetchMenus() {
+export function fetchMenus(restaurantId) {
     return (dispatch) => {
         const url = APIURLS.fetchMenus()
 
-        fetch(url)
+        console.log('hellow nssncjbdc', restaurantId)
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: getFormBody({
+                restaurantId: restaurantId,
+            }),
+        })
             .then((response) => {
                 console.log('Response', response)
                 return response.json()

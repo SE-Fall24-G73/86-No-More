@@ -62,16 +62,16 @@ class App extends React.Component {
     componentDidMount() {
         //const {user} = this.props.auth
         //this.props.dispatch(fetchFriends(user._id));
-        this.props.dispatch(fetchJobs())
-
-        this.props.dispatch(fetchMenus())
 
         const token = getAuthTokenFromLocalStorage()
-
         if (token) {
             const user = jwtDecode(token)
 
-            console.log('user', user)
+            this.props.dispatch(fetchJobs())
+
+            if (user) {
+                this.props.dispatch(fetchMenus(user?._id))
+            }
 
             this.props.dispatch(
                 authenticateUser({
