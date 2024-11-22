@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = 8000;
+require("dotenv").config();
 
 const expressLayouts = require("express-ejs-layouts");
 
@@ -20,11 +21,14 @@ const passportJWT = require("./config/passport-jwt-strategy");
 
 app.use(
   cors({
-    origin: "http://localhost:3000/",
+    origin: process.env.FRONTEND_URL || "http://localhost:3000/",
   })
 );
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Origin",
+    process.env.FRONTEND_URL || "http://localhost:3000/"
+  );
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
