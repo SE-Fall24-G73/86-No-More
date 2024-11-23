@@ -186,7 +186,7 @@ const Notification = (props) => {
                             <Card key={item._id} className={classes.root}>
                                 <CardContent>
                                     <Typography color="primary" gutterBottom>
-                                        Low Inventory Alert!
+                                        Low Inventory Alert!!
                                     </Typography>
                                     <Typography
                                         color="textSecondary"
