@@ -17,7 +17,7 @@ import {
 import { fetchJobs } from '../actions/job'
 
 import { APIURLS } from '../helpers/urls'
-import toast from 'react-hot-toast' // Assuming you use react-hot-toast for notifications
+import toast from 'react-hot-toast'
 
 class Goal extends Component {
     constructor(props) {
@@ -49,18 +49,18 @@ class Goal extends Component {
     handleSave1 = () => {
         const { itemName, quantity, metric } = this.state
 
-        console.log(itemName)
-
-        this.props.dispatch(editItem(itemName, quantity, metric))
+        // Dispatch action with only available parameters
         this.props.dispatch(createInventoryHistory(itemName, quantity, metric))
+
         this.setState({
             itemName: '',
             quantity: 0,
+            metric: 'Items',
         })
 
         alert('Updated the quantity of ' + itemName)
-        document.getElementById('itnameupdate').value = ''
-        document.getElementById('quanupdate').value = ''
+
+        // It's better to control input values via state
     }
 
     getReduction = () => {
@@ -80,8 +80,6 @@ class Goal extends Component {
 
     handleSave = () => {
         const {
-            restaurantName,
-            restaurantId,
             itemName,
             quantity,
             costperitem,
@@ -92,14 +90,16 @@ class Goal extends Component {
 
         const { user } = this.props.auth
 
+        // Set restaurant information
         this.setState({
             restaurantName: user.restaurantName,
             restaurantId: user._id,
         })
 
+        // Dispatch createJob action
         this.props.dispatch(
             createJob(
-                user.restname,
+                user.restaurantName,
                 user._id,
                 itemName,
                 quantity,
@@ -109,23 +109,53 @@ class Goal extends Component {
                 metric
             )
         )
-        this.props.dispatch(createInventoryHistory(itemName, quantity, metric))
+
+        // Dispatch createInventoryHistory with all required parameters
+        this.props.dispatch(
+            createInventoryHistory(
+                itemName,
+                quantity,
+                metric,
+                costperitem,
+                datebought,
+                dateexpired,
+                user.restaurantName,
+                user._id
+            )
+        )
+
+        // Reset state variables
         this.setState({
             itemName: '',
             quantity: 0,
             costperitem: '',
             datebought: '',
             dateexpired: '',
+            metric: 'Items',
         })
 
         // Display a success message
         toast.success(itemName + ' added to the inventory!')
-        // Clear input fields
-        document.getElementById('itname').value = ''
-        document.getElementById('quan').value = ''
-        document.getElementById('cost').value = ''
-        document.getElementById('bdate').value = ''
-        document.getElementById('edate').value = ''
+    }
+
+    resetEstimate = async () => {
+        try {
+            const response = await fetch(APIURLS.fetchReductionEstimate())
+            const data = await response.json()
+
+            this.setState({
+                itemAmount: data.reduction[0].amount,
+                itemTotal: data.reduction[0].total,
+                tonsAmount: data.reduction[1].amount,
+                tonsTotal: data.reduction[1].total,
+                gallonsAmount: data.reduction[2].amount,
+                gallonsTotal: data.reduction[2].total,
+                kilogramsAmount: data.reduction[3].amount,
+                kilogramsTotal: data.reduction[3].total,
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
     }
 
     async componentDidMount() {
@@ -134,8 +164,6 @@ class Goal extends Component {
         try {
             const response = await fetch(APIURLS.fetchReductionEstimate())
             const data = await response.json()
-            console.log(data.reduction[0].amount)
-            console.log('Howdy')
 
             this.setState({
                 itemAmount: data.reduction[0].amount,
@@ -177,6 +205,7 @@ class Goal extends Component {
                             placeholder="Item Name"
                             type="text"
                             required
+                            value={this.state.itemName}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'itemName',
@@ -190,8 +219,9 @@ class Goal extends Component {
                         <input
                             id="quan"
                             placeholder="Quantity"
-                            type="number" // Changed to number input
+                            type="number"
                             required
+                            value={this.state.quantity}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
@@ -202,7 +232,7 @@ class Goal extends Component {
                         <select
                             id="metric"
                             name="selected"
-                            defaultValue={'Items'}
+                            value={this.state.metric}
                             style={{
                                 border: '1px solid rgba(0, 0, 0, 0.12)',
                                 height: '40px',
@@ -228,6 +258,7 @@ class Goal extends Component {
                             placeholder="Cost per Unit"
                             type="text"
                             required
+                            value={this.state.costperitem}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'costperitem',
@@ -240,8 +271,9 @@ class Goal extends Component {
                         <input
                             id="bdate"
                             placeholder="Date Bought"
-                            type="date" // Changed to date input
+                            type="date"
                             required
+                            value={this.state.datebought}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'datebought',
@@ -255,8 +287,9 @@ class Goal extends Component {
                         <input
                             id="edate"
                             placeholder="Expiration Date"
-                            type="date" // Changed to date input
+                            type="date"
                             required
+                            value={this.state.dateexpired}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'dateexpired',
@@ -294,6 +327,7 @@ class Goal extends Component {
                             placeholder="Item Name"
                             type="text"
                             required
+                            value={this.state.itemName}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'itemName',
@@ -307,8 +341,9 @@ class Goal extends Component {
                         <input
                             id="quanupdate"
                             placeholder="Quantity"
-                            type="number" // Changed to number input
+                            type="number"
                             required
+                            value={this.state.quantity}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
@@ -320,7 +355,7 @@ class Goal extends Component {
                         <select
                             id="metric"
                             name="selected"
-                            defaultValue={'Tons'}
+                            value={this.state.metric}
                             style={{
                                 border: '1px solid rgba(0, 0, 0, 0.12)',
                                 height: '40px',
@@ -333,6 +368,7 @@ class Goal extends Component {
                                 this.handleInputChange('metric', e.target.value)
                             }
                         >
+                            <option value="Items">Items</option>
                             <option value="Tons">Tons</option>
                             <option value="Gallons">Gallons</option>
                             <option value="KiloGrams">KiloGrams</option>
@@ -408,7 +444,7 @@ class Goal extends Component {
                     <div className="field">
                         <button
                             className="button save-btn"
-                            onClick={this.handleSave1} // You might want to create a separate method to reset estimates
+                            onClick={this.resetEstimate} // Updated to use resetEstimate
                         >
                             Reset Estimate
                         </button>
