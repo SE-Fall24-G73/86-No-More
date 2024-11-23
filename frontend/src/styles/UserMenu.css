@@ -10,6 +10,33 @@
     margin-bottom: 20px;
 }
 
+/* Styles for filter section */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.filter-input,
+.filter-select,
+.price-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.price-range-filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.price-range-filter span {
+    white-space: nowrap;
+}
+
 .content {
     display: flex;
     flex-wrap: wrap;
