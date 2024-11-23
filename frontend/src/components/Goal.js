@@ -1,3 +1,5 @@
+// Goal.js
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
@@ -15,6 +17,7 @@ import {
 import { fetchJobs } from '../actions/job'
 
 import { APIURLS } from '../helpers/urls'
+import toast from 'react-hot-toast' // Assuming you use react-hot-toast for notifications
 
 class Goal extends Component {
     constructor(props) {
@@ -31,21 +34,31 @@ class Goal extends Component {
             editMode: false,
             metric: 'Items',
             reductionData: '',
+            // Additional state variables for reduction estimates
+            itemAmount: 0,
+            itemTotal: 0,
+            tonsAmount: 0,
+            tonsTotal: 0,
+            gallonsAmount: 0,
+            gallonsTotal: 0,
+            kilogramsAmount: 0,
+            kilogramsTotal: 0,
         }
     }
 
     handleSave1 = () => {
-        const { itemname, quantity, metric } = this.state
+        const { itemName, quantity, metric } = this.state
 
-        console.log(itemname)
+        console.log(itemName)
 
-        this.props.dispatch(editItem(itemname, quantity, metric))
-        this.props.dispatch(createInventoryHistory(itemname, quantity, metric))
+        this.props.dispatch(editItem(itemName, quantity, metric))
+        this.props.dispatch(createInventoryHistory(itemName, quantity, metric))
         this.setState({
-            itemname: '',
+            itemName: '',
+            quantity: 0,
         })
 
-        alert('updated the quantity of ' + itemname)
+        alert('Updated the quantity of ' + itemName)
         document.getElementById('itnameupdate').value = ''
         document.getElementById('quanupdate').value = ''
     }
@@ -96,37 +109,35 @@ class Goal extends Component {
                 metric
             )
         )
-        this.props.dispatch(createInventoryHistory(itemname, quantity, metric))
+        this.props.dispatch(createInventoryHistory(itemName, quantity, metric))
         this.setState({
-            itemname: '',
+            itemName: '',
+            quantity: 0,
+            costperitem: '',
+            datebought: '',
+            dateexpired: '',
         })
 
-        // alert(itemName + ' added to the inventory!')
+        // Display a success message
         toast.success(itemName + ' added to the inventory!')
+        // Clear input fields
         document.getElementById('itname').value = ''
         document.getElementById('quan').value = ''
         document.getElementById('cost').value = ''
-        document.getElementById('edate').value = ''
         document.getElementById('bdate').value = ''
+        document.getElementById('edate').value = ''
     }
 
     async componentDidMount() {
         this.props.dispatch(fetchJobs())
-        // this.props.dispatch(fetchReductionEstimate())
-        // const data = fetchReductionEstimate();
-        // this.setState(() => ({
-        //     reductionData: data
-        // }))
-        // console.log(data)
-        // console.log("HERE123")
 
         try {
-            const response = await fetch(APIURLS.fetchReductionEstimate()) // replace with actual endpoint
+            const response = await fetch(APIURLS.fetchReductionEstimate())
             const data = await response.json()
             console.log(data.reduction[0].amount)
             console.log('Howdy')
-            // this.setState({ apiData: data })
-            this.setState(() => ({
+
+            this.setState({
                 itemAmount: data.reduction[0].amount,
                 itemTotal: data.reduction[0].total,
                 tonsAmount: data.reduction[1].amount,
@@ -135,7 +146,7 @@ class Goal extends Component {
                 gallonsTotal: data.reduction[2].total,
                 kilogramsAmount: data.reduction[3].amount,
                 kilogramsTotal: data.reduction[3].total,
-            }))
+            })
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -148,6 +159,7 @@ class Goal extends Component {
 
         return (
             <div>
+                {/* Add Inventory Form */}
                 <div
                     className="goal-form"
                     style={{
@@ -167,7 +179,7 @@ class Goal extends Component {
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'itemname',
+                                    'itemName',
                                     e.target.value
                                 )
                             }
@@ -178,12 +190,12 @@ class Goal extends Component {
                         <input
                             id="quan"
                             placeholder="Quantity"
-                            type="text"
+                            type="number" // Changed to number input
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
-                                    e.target.value
+                                    Number(e.target.value)
                                 )
                             }
                         />
@@ -218,7 +230,7 @@ class Goal extends Component {
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'costperunit',
+                                    'costperitem',
                                     e.target.value
                                 )
                             }
@@ -227,8 +239,8 @@ class Goal extends Component {
                     <div className="field">
                         <input
                             id="bdate"
-                            placeholder="Date Bought (mm/dd/yyyy)"
-                            type="text"
+                            placeholder="Date Bought"
+                            type="date" // Changed to date input
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
@@ -242,8 +254,8 @@ class Goal extends Component {
                     <div className="field">
                         <input
                             id="edate"
-                            placeholder="Expiration Date (mm/dd/yyyy)"
-                            type="text"
+                            placeholder="Expiration Date"
+                            type="date" // Changed to date input
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
@@ -264,6 +276,7 @@ class Goal extends Component {
                     </div>
                 </div>
 
+                {/* Update Item Form */}
                 <div
                     className="goal-form"
                     style={{
@@ -283,7 +296,7 @@ class Goal extends Component {
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'itemname',
+                                    'itemName',
                                     e.target.value
                                 )
                             }
@@ -294,12 +307,12 @@ class Goal extends Component {
                         <input
                             id="quanupdate"
                             placeholder="Quantity"
-                            type="text"
+                            type="number" // Changed to number input
                             required
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
-                                    e.target.value
+                                    Number(e.target.value)
                                 )
                             }
                         />
@@ -335,6 +348,8 @@ class Goal extends Component {
                         </button>
                     </div>
                 </div>
+
+                {/* Estimated Waste Reduction */}
                 <div
                     className="goal-form"
                     style={{
@@ -355,49 +370,45 @@ class Goal extends Component {
                         </p>
                         <p>Items:</p>
                         <p>
-                            {JSON.stringify(
-                                this.state.itemTotal != 0
-                                    ? (100 * this.state.itemAmount) /
-                                          this.state.itemTotal
-                                    : 0
-                            )}
-                            % loss
+                            {this.state.itemTotal !== 0
+                                ? `${(
+                                      (100 * this.state.itemAmount) /
+                                      this.state.itemTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
                         </p>
                         <p>Tons:</p>
                         <p>
-                            {JSON.stringify(
-                                this.state.tonsTotal != 0
-                                    ? (100 * this.state.tonsAmount) /
-                                          this.state.tonsTotal
-                                    : 0
-                            )}
-                            % loss
+                            {this.state.tonsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.tonsAmount) /
+                                      this.state.tonsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
                         </p>
                         <p>Gallons:</p>
                         <p>
-                            {JSON.stringify(
-                                this.state.gallonsTotal != 0
-                                    ? (100 * this.state.gallonsAmount) /
-                                          this.state.gallonsTotal
-                                    : 0
-                            )}
-                            % loss
+                            {this.state.gallonsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.gallonsAmount) /
+                                      this.state.gallonsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
                         </p>
                         <p>Kilograms:</p>
                         <p>
-                            {JSON.stringify(
-                                this.state.kilogramsTotal != 0
-                                    ? (100 * this.state.kilogramsAmount) /
-                                          this.state.kilogramsTotal
-                                    : 0
-                            )}
-                            % loss
+                            {this.state.kilogramsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.kilogramsAmount) /
+                                      this.state.kilogramsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
                         </p>
                     </div>
                     <div className="field">
                         <button
                             className="button save-btn"
-                            onClick={this.handleSave1}
+                            onClick={this.handleSave1} // You might want to create a separate method to reset estimates
                         >
                             Reset Estimate
                         </button>

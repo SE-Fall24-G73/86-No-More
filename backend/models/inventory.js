@@ -1,19 +1,21 @@
+// models/Inventory.js
+
 const mongoose = require("mongoose");
 
 const inventorySchema = new mongoose.Schema({
-  restname: {
+  restaurantName: {
     type: String,
     required: true,
   },
-  itemname: {
+  restaurantId: {
+    type: String,
+    required: true,
+  },
+  itemName: {
     type: String,
     required: true,
   },
   metric: {
-    type: String,
-    required: true,
-  },
-  restid:{
     type: String,
     required: true,
   },
@@ -26,13 +28,13 @@ const inventorySchema = new mongoose.Schema({
     required: true,
   },
   datebought: {
-    type: String,
+    type: Date,
     required: true,
   },
   dateexpired: {
-    type: String,
+    type: Date,
     required: true,
-  }
+  },
 });
 
 const Inventory = mongoose.model("Inventory", inventorySchema);
