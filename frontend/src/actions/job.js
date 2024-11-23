@@ -150,7 +150,16 @@ export function deleteMenu(id) {
     }
 }
 
-export function createInventoryHistory(itemname, quantity, metric) {
+export function createInventoryHistory(
+    itemName,
+    quantity,
+    metric,
+    costperitem,
+    datebought,
+    dateexpired,
+    restaurantName,
+    restaurantId
+) {
     return (dispatch) => {
         const url = APIURLS.createInventoryHistory()
         fetch(url, {
@@ -159,9 +168,14 @@ export function createInventoryHistory(itemname, quantity, metric) {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: getFormBody({
-                itemname,
+                itemName,
                 quantity,
                 metric,
+                costperitem,
+                datebought,
+                dateexpired,
+                restaurantName,
+                restaurantId,
             }),
         })
             .then((response) => response.json())

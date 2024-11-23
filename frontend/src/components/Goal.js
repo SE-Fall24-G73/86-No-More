@@ -1,3 +1,5 @@
+// Goal.js
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
@@ -7,43 +9,58 @@ import { clearsearchstate } from '../actions/search'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { createJob, createInventoryHistory, fetchReductionEstimate } from '../actions/job'
+import {
+    createJob,
+    createInventoryHistory,
+    fetchReductionEstimate,
+} from '../actions/job'
 import { fetchJobs } from '../actions/job'
 
 import { APIURLS } from '../helpers/urls'
+import toast from 'react-hot-toast'
 
 class Goal extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            restname: '',
-            restid: '',
-            itemname: '',
-            quantity: '0',
+            restaurantName: '',
+            restaurantId: '',
+            itemName: '',
+            quantity: 0,
             costperitem: '',
             datebought: '',
             dateexpired: '',
             editMode: false,
             metric: 'Items',
             reductionData: '',
+            // Additional state variables for reduction estimates
+            itemAmount: 0,
+            itemTotal: 0,
+            tonsAmount: 0,
+            tonsTotal: 0,
+            gallonsAmount: 0,
+            gallonsTotal: 0,
+            kilogramsAmount: 0,
+            kilogramsTotal: 0,
         }
     }
 
     handleSave1 = () => {
-        const { itemname, quantity, metric } = this.state
+        const { itemName, quantity, metric } = this.state
 
-        console.log(itemname)
+        // Dispatch action with only available parameters
+        this.props.dispatch(createInventoryHistory(itemName, quantity, metric))
 
-        this.props.dispatch(editItem(itemname, quantity, metric))
-        this.props.dispatch(createInventoryHistory(itemname, quantity, metric))
         this.setState({
-            itemname: '',
+            itemName: '',
+            quantity: 0,
+            metric: 'Items',
         })
 
-        alert('updated the quantity of ' + itemname)
-        document.getElementById('itnameupdate').value = ''
-        document.getElementById('quanupdate').value = ''
+        alert('Updated the quantity of ' + itemName)
+
+        // It's better to control input values via state
     }
 
     getReduction = () => {
@@ -63,9 +80,7 @@ class Goal extends Component {
 
     handleSave = () => {
         const {
-            restname,
-            restid,
-            itemname,
+            itemName,
             quantity,
             costperitem,
             datebought,
@@ -75,16 +90,18 @@ class Goal extends Component {
 
         const { user } = this.props.auth
 
+        // Set restaurant information
         this.setState({
-            restname: user.restname,
-            restid: user._id,
+            restaurantName: user.restaurantName,
+            restaurantId: user._id,
         })
 
+        // Dispatch createJob action
         this.props.dispatch(
             createJob(
-                user.restname,
+                user.restaurantName,
                 user._id,
-                itemname,
+                itemName,
                 quantity,
                 costperitem,
                 datebought,
@@ -92,49 +109,74 @@ class Goal extends Component {
                 metric
             )
         )
-        this.props.dispatch(createInventoryHistory(itemname, quantity, metric))
+
+        // Dispatch createInventoryHistory with all required parameters
+        this.props.dispatch(
+            createInventoryHistory(
+                itemName,
+                quantity,
+                metric,
+                costperitem,
+                datebought,
+                dateexpired,
+                user.restaurantName,
+                user._id
+            )
+        )
+
+        // Reset state variables
         this.setState({
-            itemname: '',
+            itemName: '',
+            quantity: 0,
+            costperitem: '',
+            datebought: '',
+            dateexpired: '',
+            metric: 'Items',
         })
 
-        alert(itemname + ' added to the inventory!')
-        document.getElementById('itname').value = ''
-        document.getElementById('quan').value = ''
-        document.getElementById('cost').value = ''
-        document.getElementById('edate').value = ''
-        document.getElementById('bdate').value = ''
+        // Display a success message
+        toast.success(itemName + ' added to the inventory!')
     }
 
+    resetEstimate = async () => {
+        try {
+            const response = await fetch(APIURLS.fetchReductionEstimate())
+            const data = await response.json()
 
+            this.setState({
+                itemAmount: data.reduction[0].amount,
+                itemTotal: data.reduction[0].total,
+                tonsAmount: data.reduction[1].amount,
+                tonsTotal: data.reduction[1].total,
+                gallonsAmount: data.reduction[2].amount,
+                gallonsTotal: data.reduction[2].total,
+                kilogramsAmount: data.reduction[3].amount,
+                kilogramsTotal: data.reduction[3].total,
+            })
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     async componentDidMount() {
         this.props.dispatch(fetchJobs())
-        // this.props.dispatch(fetchReductionEstimate())
-        // const data = fetchReductionEstimate();
-        // this.setState(() => ({
-        //     reductionData: data
-        // }))
-        // console.log(data)
-        // console.log("HERE123")
 
         try {
-            const response = await fetch(APIURLS.fetchReductionEstimate()) // replace with actual endpoint
+            const response = await fetch(APIURLS.fetchReductionEstimate())
             const data = await response.json()
-            console.log(data.reduction[0].amount)
-            console.log("Howdy")
-            // this.setState({ apiData: data })
-            this.setState(() => ({
-                itemAmount : data.reduction[0].amount,
-                itemTotal : data.reduction[0].total,
-                tonsAmount : data.reduction[1].amount,
-                tonsTotal : data.reduction[1].total,
-                gallonsAmount : data.reduction[2].amount,
-                gallonsTotal : data.reduction[2].total,
-                kilogramsAmount : data.reduction[3].amount,
-                kilogramsTotal : data.reduction[3].total,
-            }))
+
+            this.setState({
+                itemAmount: data.reduction[0].amount,
+                itemTotal: data.reduction[0].total,
+                tonsAmount: data.reduction[1].amount,
+                tonsTotal: data.reduction[1].total,
+                gallonsAmount: data.reduction[2].amount,
+                gallonsTotal: data.reduction[2].total,
+                kilogramsAmount: data.reduction[3].amount,
+                kilogramsTotal: data.reduction[3].total,
+            })
         } catch (error) {
-            console.error("Error fetching data:", error)
+            console.error('Error fetching data:', error)
         }
     }
 
@@ -145,6 +187,7 @@ class Goal extends Component {
 
         return (
             <div>
+                {/* Add Inventory Form */}
                 <div
                     className="goal-form"
                     style={{
@@ -162,9 +205,10 @@ class Goal extends Component {
                             placeholder="Item Name"
                             type="text"
                             required
+                            value={this.state.itemName}
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'itemname',
+                                    'itemName',
                                     e.target.value
                                 )
                             }
@@ -175,19 +219,20 @@ class Goal extends Component {
                         <input
                             id="quan"
                             placeholder="Quantity"
-                            type="text"
+                            type="number"
                             required
+                            value={this.state.quantity}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
-                                    e.target.value
+                                    Number(e.target.value)
                                 )
                             }
                         />
                         <select
                             id="metric"
                             name="selected"
-                            defaultValue={'Items'}
+                            value={this.state.metric}
                             style={{
                                 border: '1px solid rgba(0, 0, 0, 0.12)',
                                 height: '40px',
@@ -213,9 +258,10 @@ class Goal extends Component {
                             placeholder="Cost per Unit"
                             type="text"
                             required
+                            value={this.state.costperitem}
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'costperunit',
+                                    'costperitem',
                                     e.target.value
                                 )
                             }
@@ -224,9 +270,10 @@ class Goal extends Component {
                     <div className="field">
                         <input
                             id="bdate"
-                            placeholder="Date Bought (mm/dd/yyyy)"
-                            type="text"
+                            placeholder="Date Bought"
+                            type="date"
                             required
+                            value={this.state.datebought}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'datebought',
@@ -239,9 +286,10 @@ class Goal extends Component {
                     <div className="field">
                         <input
                             id="edate"
-                            placeholder="Expiration Date (mm/dd/yyyy)"
-                            type="text"
+                            placeholder="Expiration Date"
+                            type="date"
                             required
+                            value={this.state.dateexpired}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'dateexpired',
@@ -261,6 +309,7 @@ class Goal extends Component {
                     </div>
                 </div>
 
+                {/* Update Item Form */}
                 <div
                     className="goal-form"
                     style={{
@@ -278,9 +327,10 @@ class Goal extends Component {
                             placeholder="Item Name"
                             type="text"
                             required
+                            value={this.state.itemName}
                             onChange={(e) =>
                                 this.handleInputChange(
-                                    'itemname',
+                                    'itemName',
                                     e.target.value
                                 )
                             }
@@ -291,12 +341,13 @@ class Goal extends Component {
                         <input
                             id="quanupdate"
                             placeholder="Quantity"
-                            type="text"
+                            type="number"
                             required
+                            value={this.state.quantity}
                             onChange={(e) =>
                                 this.handleInputChange(
                                     'quantity',
-                                    e.target.value
+                                    Number(e.target.value)
                                 )
                             }
                         />
@@ -304,7 +355,7 @@ class Goal extends Component {
                         <select
                             id="metric"
                             name="selected"
-                            defaultValue={'Tons'}
+                            value={this.state.metric}
                             style={{
                                 border: '1px solid rgba(0, 0, 0, 0.12)',
                                 height: '40px',
@@ -317,6 +368,7 @@ class Goal extends Component {
                                 this.handleInputChange('metric', e.target.value)
                             }
                         >
+                            <option value="Items">Items</option>
                             <option value="Tons">Tons</option>
                             <option value="Gallons">Gallons</option>
                             <option value="KiloGrams">KiloGrams</option>
@@ -332,6 +384,8 @@ class Goal extends Component {
                         </button>
                     </div>
                 </div>
+
+                {/* Estimated Waste Reduction */}
                 <div
                     className="goal-form"
                     style={{
@@ -340,22 +394,57 @@ class Goal extends Component {
                         marginLeft: '100px',
                     }}
                 >
-                    <span className="login-signup-header">Estimated Waste Reduction</span>
+                    <span className="login-signup-header">
+                        Estimated Waste Reduction
+                    </span>
                     <div className="field">
-                        <p>According to the USDA, between 30 and 40 percent of food supply in the US is wasted. View the reports below to see what percent of each metric is wasted at your restaurant.</p>
+                        <p>
+                            According to the USDA, between 30 and 40 percent of
+                            food supply in the US is wasted. View the reports
+                            below to see what percent of each metric is wasted
+                            at your restaurant.
+                        </p>
                         <p>Items:</p>
-                        <p>{JSON.stringify((this.state.itemTotal != 0) ? 100 * this.state.itemAmount / this.state.itemTotal : 0)}% loss</p>
+                        <p>
+                            {this.state.itemTotal !== 0
+                                ? `${(
+                                      (100 * this.state.itemAmount) /
+                                      this.state.itemTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
+                        </p>
                         <p>Tons:</p>
-                        <p>{JSON.stringify((this.state.tonsTotal != 0) ? 100 * this.state.tonsAmount / this.state.tonsTotal : 0)}% loss</p>
+                        <p>
+                            {this.state.tonsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.tonsAmount) /
+                                      this.state.tonsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
+                        </p>
                         <p>Gallons:</p>
-                        <p>{JSON.stringify((this.state.gallonsTotal != 0) ? 100 * this.state.gallonsAmount / this.state.gallonsTotal : 0)}% loss</p>
+                        <p>
+                            {this.state.gallonsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.gallonsAmount) /
+                                      this.state.gallonsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
+                        </p>
                         <p>Kilograms:</p>
-                        <p>{JSON.stringify((this.state.kilogramsTotal != 0) ? 100 * this.state.kilogramsAmount / this.state.kilogramsTotal : 0)}% loss</p>
+                        <p>
+                            {this.state.kilogramsTotal !== 0
+                                ? `${(
+                                      (100 * this.state.kilogramsAmount) /
+                                      this.state.kilogramsTotal
+                                  ).toFixed(2)}% loss`
+                                : '0% loss'}
+                        </p>
                     </div>
                     <div className="field">
                         <button
                             className="button save-btn"
-                            onClick={this.handleSave1}
+                            onClick={this.resetEstimate} // Updated to use resetEstimate
                         >
                             Reset Estimate
                         </button>
