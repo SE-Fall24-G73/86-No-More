@@ -1,12 +1,8 @@
-import React, { Component } from 'react'
+// Notification.js
+
+import React, { useState, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import emailjs from 'emailjs-com';
-
-import { searchUsers } from '../actions/search'
-import { editItem } from '../actions/auth'
-import { clearsearchstate } from '../actions/search'
-
-import 'react-datepicker/dist/react-datepicker.css'
+import emailjs from 'emailjs-com'
 
 import { fetchJobs } from '../actions/job'
 
@@ -14,7 +10,9 @@ import Box from '@material-ui/core/Box'
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
-import makeStyles from '@material-ui/core/styles/makeStyles'
+import { makeStyles } from '@material-ui/core/styles'
+import axios from 'axios'
+import { API_ROOT, APIURLS } from '../helpers/urls'
 
 const useStyles = makeStyles({
     root: {
@@ -36,209 +34,154 @@ const useStyles = makeStyles({
     },
 })
 
-class Notification extends Component {
-    constructor(props) {
-        super(props)
+const Notification = (props) => {
+    const classes = useStyles()
+    const [inventoryData, setInventoryData] = useState([])
+    const [itemsExpiringToday, setItemsExpiringToday] = useState([])
+    const [itemsBelowThreshold, setItemsBelowThreshold] = useState([])
 
-        this.state = {
-            itemnam: '',
-            restid: '',
-            itemname: '',
-            quantity: '0',
-            costperitem: '',
-            datebought: '',
-            dateexpired: '',
-            editMode: false,
+    const { error } = props.auth
+    const { user } = props.auth
+    const jobs = props.job || []
+
+    const fetchInventoryHistory = async () => {
+        try {
+            const restaurantId = user._id
+
+            const data = await axios.post(
+                `${API_ROOT}/users/fetchinventoryHistory`,
+                {
+                    restaurantId,
+                }
+            )
+
+            // console.log(data.data.inventoryhistory)
+
+            setInventoryData(data.data.inventoryhistory)
+        } catch (error) {
+            console.error(error)
         }
     }
 
-    handleSearch = (e) => {
-        const searchText = e.target.value
-        console.log(searchText)
+    useEffect(() => {
+        fetchInventoryHistory()
+    }, [])
 
-        this.props.dispatch(searchUsers(searchText))
-    }
+    useEffect(() => {
+        if (inventoryData.length > 0) {
+            const today = new Date()
+            today.setHours(0, 0, 0, 0) // Normalize to midnight
 
-    clearSearch = () => {
-        this.props.dispatch(clearsearchstate([]))
-        console.log('UNMOUNT')
-    }
+            // Items expiring today
+            const expiringToday = inventoryData.filter((item) => {
+                const expirationDate = new Date(item.dateexpired)
+                expirationDate.setHours(0, 0, 0, 0) // Normalize to midnight
+                return expirationDate.getTime() === today.getTime()
+            })
 
-    handleInputChange = (fieldName, val) => {
-        this.setState({
-            [fieldName]: val,
-        })
-    }
+            // Items with quantity below threshold
+            const quantityThreshold = 10 // Set your threshold here
+            const lowQuantityItems = inventoryData.filter(
+                (item) => item.quantity < quantityThreshold
+            )
 
-    handleSave = () => {
-        const {
-            restname,
-            restid,
-            itemname,
-            quantity,
-            costperitem,
-            datebought,
-            dateexpired,
-        } = this.state
+            setItemsExpiringToday(expiringToday)
+            setItemsBelowThreshold(lowQuantityItems)
 
-        const { user } = this.props.auth
-        const { job } = this.props
-        console.log(itemname)
+            // For debugging
+            console.log('Items expiring today:', expiringToday)
+            console.log('Items below threshold:', lowQuantityItems)
+        }
+    }, [inventoryData])
 
-        this.props.dispatch(editItem(itemname, quantity))
+    return (
+        <div>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'column',
+                }}
+            >
+                {itemsExpiringToday.length > 0 ||
+                itemsBelowThreshold.length > 0 ? (
+                    <Box flexDirection="row-reverse">
+                        {itemsExpiringToday.map((item) => (
+                            <Card key={item._id} className={classes.root}>
+                                <CardContent>
+                                    <Typography color="secondary" gutterBottom>
+                                        Expiration Alert!
+                                    </Typography>
+                                    <Typography
+                                        color="textSecondary"
+                                        gutterBottom
+                                    >
+                                        {item.dateexpired}
+                                    </Typography>
+                                    <Typography variant="h5" component="h2">
+                                        {item.itemName} has expired on{' '}
+                                        {item.dateexpired}
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        {item.quantity} unit
+                                        {item.quantity > 1
+                                            ? 's have'
+                                            : ' has'}{' '}
+                                        gone bad. Please order more.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
 
-        this.setState({
-            itemname: '',
-        })
-    }
-    sendEmail(name) {
-        var templateParams = {
-            name: name
-          };
-        emailjs.send('service_03wshsv', 'template_63zypn7',templateParams , 'K5DPnwPqbFw_MaGnn')
-      .then((result) => {
-        console.log(name)
-      } )
-      .catch((error) => {
-          console.log(error.text);
-      });       
-    }
-
-    componentDidMount() {
-        this.props.dispatch(fetchJobs())
-    }
-
-    render() {
-        const { error } = this.props.auth
-        const { user } = this.props.auth
-        const { job } = this.props
-
-        let utc = new Date().toJSON().slice(0, 10).replace(/-/g, '/')
-        var parts = utc.split('/')
-
-        return (
-            <div>
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        flexDirection: 'column',
-                    }}
-                >
-                    {1 > 0 ? (
-                        <Box flexDirection="row-reverse">
-                            {job.map((job) => {
-                                var parts2 = job.dateexpired.split('/')
-                                console.log('parrrtptptps', parts2)
-                                console.log('parrrt1', parts)
-                                if (
-                                    Number(parts[0]) - Number(parts2[2]) < 0 ||
-                                    Number(parts[1]) - Number(parts2[0]) < 0 ||
-                                    Number(parts[2]) > Number(parts2[1])
-                                ) {
-                                    this.sendEmail(job.itemname)
-                                    return (
-                                        <Card key={job._id}>
-                                            <CardContent>
-                                                <Typography
-                                                    color="secondary"
-                                                    gutterBottom
-                                                >
-                                                    Expiration Alert!
-                                                </Typography>
-                                                <Typography
-                                                    color="textSecondary"
-                                                    gutterBottom
-                                                >
-                                                    {job.dateexpired}
-                                                </Typography>
-                                                <Typography
-                                                    variant="h5"
-                                                    component="h2"
-                                                >
-                                                    {job.itemname} has expired
-                                                    on {job.dateexpired}
-                                                </Typography>
-                                                <Typography color="textSecondary">
-                                                    {job.quantity} unit
-                                                    {job.quantity > 1
-                                                        ? 's have'
-                                                        : ' has'}{' '}
-                                                    gone bad. Please order more.
-                                                </Typography>
-                                            </CardContent>
-                                        </Card>
-                                    )
-                                }
-                            })}
-
-                            {job.map((job) => {
-                                if (job.dateexpired < utc) {
-                                    if (job.quantity < 10) {
-                                        return (
-                                            <Card key={job._id}>
-                                                <CardContent>
-                                                    <Typography
-                                                        color="primary"
-                                                        gutterBottom
-                                                    >
-                                                        Low Inventory Alert!
-                                                    </Typography>
-                                                    <Typography
-                                                        color="textSecondary"
-                                                        gutterBottom
-                                                    >
-                                                        Only {job.quantity} unit
-                                                        {job.quantity > 1
-                                                            ? 's are'
-                                                            : ' is'}{' '}
-                                                        left in stock.
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="h5"
-                                                        component="h2"
-                                                    >
-                                                        It looks like some of
-                                                        your inventory is
-                                                        getting low
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="h6"
-                                                        component="h2"
-                                                        color="textSecondary"
-                                                    >
-                                                        {job.itemname} quantity
-                                                        is low. Try checking
-                                                        quantity or restricting
-                                                        use.
-                                                    </Typography>
-                                                </CardContent>
-                                            </Card>
-                                        )
-                                    }
-                                }
-                            })}
-                        </Box>
-                    ) : (
-                        <div
-                            style={{
-                                display: 'flex',
-                                width: '100vw',
-                                height: '90vh',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <div style={{ fontSize: '3rem' }}>
-                                All caught up!✔
-                            </div>
-                        </div>
-                    )}
-                </div>
+                        {itemsBelowThreshold.map((item) => (
+                            <Card key={item._id} className={classes.root}>
+                                <CardContent>
+                                    <Typography color="primary" gutterBottom>
+                                        Low Inventory Alert!
+                                    </Typography>
+                                    <Typography
+                                        color="textSecondary"
+                                        gutterBottom
+                                    >
+                                        Only {item.quantity} unit
+                                        {item.quantity > 1
+                                            ? 's are'
+                                            : ' is'}{' '}
+                                        left in stock.
+                                    </Typography>
+                                    <Typography variant="h5" component="h2">
+                                        It looks like some of your inventory is
+                                        getting low
+                                    </Typography>
+                                    <Typography
+                                        variant="h6"
+                                        component="h2"
+                                        color="textSecondary"
+                                    >
+                                        {item.itemName} quantity is low. Try
+                                        checking quantity or restricting use.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+                ) : (
+                    <div
+                        style={{
+                            display: 'flex',
+                            width: '100vw',
+                            height: '90vh',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <div style={{ fontSize: '3rem' }}>All caught up!✔</div>
+                    </div>
+                )}
             </div>
-        )
-    }
+        </div>
+    )
 }
 
 function mapStateToProps(state) {

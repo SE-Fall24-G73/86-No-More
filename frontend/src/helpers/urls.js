@@ -1,4 +1,4 @@
-const API_ROOT = 'http://localhost:8000/api/v1'
+export const API_ROOT = 'http://localhost:8000/api/v1'
 
 export const APIURLS = {
     login: () => `${API_ROOT}/users/create-session`,
@@ -16,6 +16,7 @@ export const APIURLS = {
     createInventoryHistory: () => `${API_ROOT}/users/createinventoryHistory`,
 
     fetchInventoryHistory: () => `${API_ROOT}/users/fetchinventoryHistory`,
+
     deleteMenu: () => `${API_ROOT}/users/deleteMenu`,
     deleteInventoryItem: () => `${API_ROOT}/users/deleteInventoryItem`,
 

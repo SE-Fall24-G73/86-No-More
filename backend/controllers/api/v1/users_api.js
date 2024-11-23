@@ -664,14 +664,24 @@ module.exports.createInventoryHistory = async function (req, res) {
 
 module.exports.fetchInventoryHistory = async function (req, res) {
   //let inventoryhistory = await Inventoryhistory.findOne({itemname: new RegExp('^'+req.body.itemname+'$', "i")});
-  let inventoryhistory = await Inventoryhistory.find({});
-  //Whenever we want to send back JSON data
-  console.log(inventoryhistory);
-  return res.json(200, {
-    message: "List of InventoryHistory",
+  try {
+    const { restaurantId } = req.body;
 
-    inventoryhistory: inventoryhistory,
-  });
+    // console.log(restaurantId);
+
+    let inventoryhistory = await Inventory.find({
+      restaurantId: restaurantId,
+    });
+
+    // console.log(inventoryhistory);
+
+    //Whenever we want to send back JSON data
+    // console.log(inventoryhistory);
+    return res.json(200, {
+      message: "List of InventoryHistory",
+      inventoryhistory: inventoryhistory,
+    });
+  } catch (error) {}
 };
 
 module.exports.fetchReductionEstimate = async function (req, res) {
