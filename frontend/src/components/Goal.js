@@ -7,7 +7,11 @@ import { clearsearchstate } from '../actions/search'
 
 import 'react-datepicker/dist/react-datepicker.css'
 
-import { createJob, createInventoryHistory, fetchReductionEstimate } from '../actions/job'
+import {
+    createJob,
+    createInventoryHistory,
+    fetchReductionEstimate,
+} from '../actions/job'
 import { fetchJobs } from '../actions/job'
 
 import { APIURLS } from '../helpers/urls'
@@ -17,10 +21,10 @@ class Goal extends Component {
         super(props)
 
         this.state = {
-            restname: '',
-            restid: '',
-            itemname: '',
-            quantity: '0',
+            restaurantName: '',
+            restaurantId: '',
+            itemName: '',
+            quantity: 0,
             costperitem: '',
             datebought: '',
             dateexpired: '',
@@ -63,9 +67,9 @@ class Goal extends Component {
 
     handleSave = () => {
         const {
-            restname,
-            restid,
-            itemname,
+            restaurantName,
+            restaurantId,
+            itemName,
             quantity,
             costperitem,
             datebought,
@@ -76,15 +80,15 @@ class Goal extends Component {
         const { user } = this.props.auth
 
         this.setState({
-            restname: user.restname,
-            restid: user._id,
+            restaurantName: user.restaurantName,
+            restaurantId: user._id,
         })
 
         this.props.dispatch(
             createJob(
                 user.restname,
                 user._id,
-                itemname,
+                itemName,
                 quantity,
                 costperitem,
                 datebought,
@@ -97,15 +101,14 @@ class Goal extends Component {
             itemname: '',
         })
 
-        alert(itemname + ' added to the inventory!')
+        // alert(itemName + ' added to the inventory!')
+        toast.success(itemName + ' added to the inventory!')
         document.getElementById('itname').value = ''
         document.getElementById('quan').value = ''
         document.getElementById('cost').value = ''
         document.getElementById('edate').value = ''
         document.getElementById('bdate').value = ''
     }
-
-
 
     async componentDidMount() {
         this.props.dispatch(fetchJobs())
@@ -121,20 +124,20 @@ class Goal extends Component {
             const response = await fetch(APIURLS.fetchReductionEstimate()) // replace with actual endpoint
             const data = await response.json()
             console.log(data.reduction[0].amount)
-            console.log("Howdy")
+            console.log('Howdy')
             // this.setState({ apiData: data })
             this.setState(() => ({
-                itemAmount : data.reduction[0].amount,
-                itemTotal : data.reduction[0].total,
-                tonsAmount : data.reduction[1].amount,
-                tonsTotal : data.reduction[1].total,
-                gallonsAmount : data.reduction[2].amount,
-                gallonsTotal : data.reduction[2].total,
-                kilogramsAmount : data.reduction[3].amount,
-                kilogramsTotal : data.reduction[3].total,
+                itemAmount: data.reduction[0].amount,
+                itemTotal: data.reduction[0].total,
+                tonsAmount: data.reduction[1].amount,
+                tonsTotal: data.reduction[1].total,
+                gallonsAmount: data.reduction[2].amount,
+                gallonsTotal: data.reduction[2].total,
+                kilogramsAmount: data.reduction[3].amount,
+                kilogramsTotal: data.reduction[3].total,
             }))
         } catch (error) {
-            console.error("Error fetching data:", error)
+            console.error('Error fetching data:', error)
         }
     }
 
@@ -340,17 +343,56 @@ class Goal extends Component {
                         marginLeft: '100px',
                     }}
                 >
-                    <span className="login-signup-header">Estimated Waste Reduction</span>
+                    <span className="login-signup-header">
+                        Estimated Waste Reduction
+                    </span>
                     <div className="field">
-                        <p>According to the USDA, between 30 and 40 percent of food supply in the US is wasted. View the reports below to see what percent of each metric is wasted at your restaurant.</p>
+                        <p>
+                            According to the USDA, between 30 and 40 percent of
+                            food supply in the US is wasted. View the reports
+                            below to see what percent of each metric is wasted
+                            at your restaurant.
+                        </p>
                         <p>Items:</p>
-                        <p>{JSON.stringify((this.state.itemTotal != 0) ? 100 * this.state.itemAmount / this.state.itemTotal : 0)}% loss</p>
+                        <p>
+                            {JSON.stringify(
+                                this.state.itemTotal != 0
+                                    ? (100 * this.state.itemAmount) /
+                                          this.state.itemTotal
+                                    : 0
+                            )}
+                            % loss
+                        </p>
                         <p>Tons:</p>
-                        <p>{JSON.stringify((this.state.tonsTotal != 0) ? 100 * this.state.tonsAmount / this.state.tonsTotal : 0)}% loss</p>
+                        <p>
+                            {JSON.stringify(
+                                this.state.tonsTotal != 0
+                                    ? (100 * this.state.tonsAmount) /
+                                          this.state.tonsTotal
+                                    : 0
+                            )}
+                            % loss
+                        </p>
                         <p>Gallons:</p>
-                        <p>{JSON.stringify((this.state.gallonsTotal != 0) ? 100 * this.state.gallonsAmount / this.state.gallonsTotal : 0)}% loss</p>
+                        <p>
+                            {JSON.stringify(
+                                this.state.gallonsTotal != 0
+                                    ? (100 * this.state.gallonsAmount) /
+                                          this.state.gallonsTotal
+                                    : 0
+                            )}
+                            % loss
+                        </p>
                         <p>Kilograms:</p>
-                        <p>{JSON.stringify((this.state.kilogramsTotal != 0) ? 100 * this.state.kilogramsAmount / this.state.kilogramsTotal : 0)}% loss</p>
+                        <p>
+                            {JSON.stringify(
+                                this.state.kilogramsTotal != 0
+                                    ? (100 * this.state.kilogramsAmount) /
+                                          this.state.kilogramsTotal
+                                    : 0
+                            )}
+                            % loss
+                        </p>
                     </div>
                     <div className="field">
                         <button
