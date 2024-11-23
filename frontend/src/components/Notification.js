@@ -1,10 +1,8 @@
 // Notification.js
 
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import emailjs from 'emailjs-com'
-
-import { fetchJobs } from '../actions/job'
 
 import Box from '@material-ui/core/Box'
 import Card from '@material-ui/core/Card'
@@ -12,7 +10,7 @@ import CardContent from '@material-ui/core/CardContent'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import axios from 'axios'
-import { API_ROOT, APIURLS } from '../helpers/urls'
+import { API_ROOT } from '../helpers/urls'
 
 const useStyles = makeStyles({
     root: {
@@ -20,11 +18,6 @@ const useStyles = makeStyles({
         marginLeft: 20,
         marginTop: 50,
         justifyContent: 'center',
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
     },
     title: {
         fontSize: 14,
@@ -38,26 +31,23 @@ const Notification = (props) => {
     const classes = useStyles()
     const [inventoryData, setInventoryData] = useState([])
     const [itemsExpiringToday, setItemsExpiringToday] = useState([])
+    const [itemsExpiringSoon, setItemsExpiringSoon] = useState([]) // New state for items expiring soon
     const [itemsBelowThreshold, setItemsBelowThreshold] = useState([])
 
-    const { error } = props.auth
     const { user } = props.auth
-    const jobs = props.job || []
 
     const fetchInventoryHistory = async () => {
         try {
             const restaurantId = user._id
 
-            const data = await axios.post(
+            const response = await axios.post(
                 `${API_ROOT}/users/fetchinventoryHistory`,
                 {
                     restaurantId,
                 }
             )
 
-            // console.log(data.data.inventoryhistory)
-
-            setInventoryData(data.data.inventoryhistory)
+            setInventoryData(response.data.inventoryhistory)
         } catch (error) {
             console.error(error)
         }
@@ -79,6 +69,21 @@ const Notification = (props) => {
                 return expirationDate.getTime() === today.getTime()
             })
 
+            // Items expiring in the next 2-3 days
+            const daysBeforeExpiration = 3 // Set the number of days before expiration to warn
+            const expiringSoon = inventoryData.filter((item) => {
+                const expirationDate = new Date(item.dateexpired)
+                expirationDate.setHours(0, 0, 0, 0) // Normalize to midnight
+
+                const timeDifference =
+                    expirationDate.getTime() - today.getTime()
+                const daysDifference = timeDifference / (1000 * 3600 * 24)
+
+                return (
+                    daysDifference > 0 && daysDifference <= daysBeforeExpiration
+                )
+            })
+
             // Items with quantity below threshold
             const quantityThreshold = 10 // Set your threshold here
             const lowQuantityItems = inventoryData.filter(
@@ -86,10 +91,12 @@ const Notification = (props) => {
             )
 
             setItemsExpiringToday(expiringToday)
+            setItemsExpiringSoon(expiringSoon) // Set the new state
             setItemsBelowThreshold(lowQuantityItems)
 
             // For debugging
             console.log('Items expiring today:', expiringToday)
+            console.log('Items expiring soon:', expiringSoon)
             console.log('Items below threshold:', lowQuantityItems)
         }
     }, [inventoryData])
@@ -105,8 +112,10 @@ const Notification = (props) => {
                 }}
             >
                 {itemsExpiringToday.length > 0 ||
+                itemsExpiringSoon.length > 0 ||
                 itemsBelowThreshold.length > 0 ? (
                     <Box flexDirection="row-reverse">
+                        {/* Items Expiring Today */}
                         {itemsExpiringToday.map((item) => (
                             <Card key={item._id} className={classes.root}>
                                 <CardContent>
@@ -117,11 +126,15 @@ const Notification = (props) => {
                                         color="textSecondary"
                                         gutterBottom
                                     >
-                                        {item.dateexpired}
+                                        {new Date(
+                                            item.dateexpired
+                                        ).toLocaleDateString()}
                                     </Typography>
                                     <Typography variant="h5" component="h2">
                                         {item.itemName} has expired on{' '}
-                                        {item.dateexpired}
+                                        {new Date(
+                                            item.dateexpired
+                                        ).toLocaleDateString()}
                                     </Typography>
                                     <Typography color="textSecondary">
                                         {item.quantity} unit
@@ -134,6 +147,41 @@ const Notification = (props) => {
                             </Card>
                         ))}
 
+                        {/* Items Expiring Soon */}
+                        {itemsExpiringSoon.map((item) => (
+                            <Card key={item._id} className={classes.root}>
+                                <CardContent>
+                                    <Typography
+                                        style={{ color: 'orange' }}
+                                        gutterBottom
+                                    >
+                                        Upcoming Expiration Alert!
+                                    </Typography>
+                                    <Typography
+                                        color="textSecondary"
+                                        gutterBottom
+                                    >
+                                        Expires on:{' '}
+                                        {new Date(
+                                            item.dateexpired
+                                        ).toLocaleDateString()}
+                                    </Typography>
+                                    <Typography variant="h5" component="h2">
+                                        {item.itemName} is expiring soon!
+                                    </Typography>
+                                    <Typography color="textSecondary">
+                                        {item.quantity} unit
+                                        {item.quantity > 1
+                                            ? 's are'
+                                            : ' is'}{' '}
+                                        left. Consider using them before they
+                                        expire.
+                                    </Typography>
+                                </CardContent>
+                            </Card>
+                        ))}
+
+                        {/* Items Below Quantity Threshold */}
                         {itemsBelowThreshold.map((item) => (
                             <Card key={item._id} className={classes.root}>
                                 <CardContent>
