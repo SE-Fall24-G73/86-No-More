@@ -48,18 +48,19 @@ class Navbar extends React.Component {
                         className="header__middle"
                         style={{ marginLeft: '20px' }}
                     >
-                        <div
-                            className="header__option "
-                            style={{ display: 'block' }}
-                        >
-                            <Link to="/menu">
-                                <RestaurantMenuIcon fontSize="large" />
-                            </Link>
-                            <p style={{ marginTop: '0px' }}>Menu</p>
-                        </div>
-
                         {user.role === 'owner' && (
                             <>
+                                <div
+                                    className="header__option "
+                                    style={{ display: 'block' }}
+                                >
+                                    <Link to="/create-menu">
+                                        <RestaurantMenuIcon fontSize="large" />
+                                    </Link>
+                                    <p style={{ marginTop: '0px' }}>
+                                        Create Menu
+                                    </p>
+                                </div>
                                 <div
                                     className="header__option "
                                     style={{ display: 'block' }}
@@ -123,6 +124,15 @@ class Navbar extends React.Component {
 
                         {user.role === 'customer' && (
                             <>
+                                <div
+                                    className="header__option "
+                                    style={{ display: 'block' }}
+                                >
+                                    <Link to="/menu">
+                                        <RestaurantMenuIcon fontSize="large" />
+                                    </Link>
+                                    <p style={{ marginTop: '0px' }}>Menu</p>
+                                </div>
                                 <div
                                     className="header__option "
                                     style={{ display: 'block' }}

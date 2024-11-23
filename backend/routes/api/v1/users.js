@@ -21,6 +21,7 @@ router.post("/createapplication", usersApi.createApplication);
 router.post("/edititem", usersApi.editItem);
 router.post("/createmenu", usersApi.createMenu);
 router.post("/fetchmenus", usersApi.fetchMenu);
+router.get("/fetchallmenus", usersApi.fetchallmenus);
 router.post("/createinventoryHistory", usersApi.createInventoryHistory);
 router.get("/fetchinventoryHistory", usersApi.fetchInventoryHistory);
 router.post("/deleteMenu", usersApi.deleteMenu);

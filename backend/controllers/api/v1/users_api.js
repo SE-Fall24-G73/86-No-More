@@ -342,6 +342,25 @@ module.exports.createJob = async function (req, res) {
   }
 };
 
+module.exports.fetchallmenus = async function (req, res) {
+  try {
+    const menus = await Menu.find({});
+
+    return res.json(200, {
+      data: {
+        menu: menus,
+      },
+      message: "Fetched all menus",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json(500, {
+      message: "Internal Server Error",
+    });
+  }
+};
+
 module.exports.createMenu = async function (req, res) {
   const {
     restaurantName,
