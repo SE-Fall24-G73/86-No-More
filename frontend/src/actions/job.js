@@ -237,8 +237,6 @@ export function fetchMenus(restaurantId) {
     return (dispatch) => {
         const url = APIURLS.fetchMenus()
 
-        console.log('hellow nssncjbdc', restaurantId)
-
         fetch(url, {
             method: 'POST',
             headers: {
@@ -249,7 +247,10 @@ export function fetchMenus(restaurantId) {
             }),
         })
             .then((response) => {
-                console.log('Response', response)
+                console.log(
+                    'Response menus ****************************************',
+                    response
+                )
                 return response.json()
             })
             .then((data) => {

@@ -11,6 +11,7 @@ export const APIURLS = {
     createMenu: () => `${API_ROOT}/users/createmenu`,
 
     fetchMenus: () => `${API_ROOT}/users/fetchmenus`,
+    fetchAllMenus: () => `${API_ROOT}/users/fetchallmenus`,
 
     createInventoryHistory: () => `${API_ROOT}/users/createinventoryHistory`,
 
