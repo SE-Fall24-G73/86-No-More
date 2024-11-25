@@ -8,12 +8,24 @@ const Inventory = require("../../../models/inventory");
 const Menu = require("../../../models/menu");
 const Inventoryhistory = require("../../../models/inventoryhistory");
 const Reduction = require("../../../models/reduction");
+var bcrypt = require("bcryptjs");
 
 module.exports.createSession = async function (req, res) {
   try {
     let user = await User.findOne({ email: req.body.email });
 
-    if (!user || user.password != req.body.password) {
+    const compare_password = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+
+    if (!compare_password) {
+      return res.status(422).json({
+        message: "Invalid username or password",
+      });
+    }
+
+    if (!user) {
       return res.json(422, {
         message: "Invalid username or password",
       });
@@ -66,15 +78,6 @@ module.exports.signUp = async function (req, res) {
     const { email, confirmPassword, password, fullName, restaurantName, role } =
       req.body;
 
-    console.log(
-      email,
-      confirmPassword,
-      password,
-      fullName,
-      restaurantName,
-      role
-    );
-
     if (
       !email ||
       !password ||
@@ -102,9 +105,9 @@ module.exports.signUp = async function (req, res) {
       }
     }
 
-    User.findOne({ email: email }, function (err, user) {
+    User.findOne({ email: email }, async function (err, user) {
       if (user) {
-        console.log(user);
+        // console.log(user);
 
         return res.json(200, {
           message: "Sign Up Successful, here is your token, plz keep it safe",
@@ -122,16 +125,19 @@ module.exports.signUp = async function (req, res) {
       }
 
       if (!user) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
         const userData = {
           email: email,
-          password: password,
+          password: hashedPassword,
           fullName: fullName,
           restaurantName: restaurantName,
           role: role,
         };
 
         let user = User.create(userData, function (err, user) {
-          console.log(err);
+          // console.log(err);
 
           if (err) {
             return res.json(500, {
@@ -338,6 +344,25 @@ module.exports.createJob = async function (req, res) {
 
     return res.json(500, {
       message: "NOT CREATED",
+    });
+  }
+};
+
+module.exports.fetchallmenus = async function (req, res) {
+  try {
+    const menus = await Menu.find({});
+
+    return res.json(200, {
+      data: {
+        menu: menus,
+      },
+      message: "Fetched all menus",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json(500, {
+      message: "Internal Server Error",
     });
   }
 };
@@ -566,11 +591,47 @@ module.exports.fetchMenu = async function (req, res) {
 module.exports.createInventoryHistory = async function (req, res) {
   // let inventory = await Inventory.findOne({ itemname: req.body.itemname });
 
+  const {
+    itemName,
+    quantity,
+    metric,
+    costperitem,
+    datebought,
+    dateexpired,
+    restaurantName,
+    restaurantId,
+  } = req.body;
+
+  console.log(
+    itemName,
+    quantity,
+    metric,
+    costperitem,
+    datebought,
+    dateexpired,
+    restaurantName,
+    restaurantId
+  );
+
   try {
-    let inventoryhistory = await Inventoryhistory.create({
-      itemname: req.body.itemname,
-      quantity: req.body.quantity,
-      metric: req.body.metric,
+    const restaurant = await User.findOne({ _id: restaurantId });
+
+    if (!restaurant) {
+      return res.status(404).json({
+        message: "Restaurant not found",
+        success: false,
+      });
+    }
+
+    let inventoryhistory = await Inventory.create({
+      itemName: itemName,
+      quantity: quantity,
+      metric: metric,
+      costperitem: costperitem,
+      datebought: datebought,
+      dateexpired: dateexpired,
+      restaurantName: restaurantName,
+      restaurantId: restaurantId,
     });
 
     let reduction = await Reduction.findOne({
@@ -603,14 +664,24 @@ module.exports.createInventoryHistory = async function (req, res) {
 
 module.exports.fetchInventoryHistory = async function (req, res) {
   //let inventoryhistory = await Inventoryhistory.findOne({itemname: new RegExp('^'+req.body.itemname+'$', "i")});
-  let inventoryhistory = await Inventoryhistory.find({});
-  //Whenever we want to send back JSON data
-  console.log(inventoryhistory);
-  return res.json(200, {
-    message: "List of InventoryHistory",
+  try {
+    const { restaurantId } = req.body;
 
-    inventoryhistory: inventoryhistory,
-  });
+    // console.log(restaurantId);
+
+    let inventoryhistory = await Inventory.find({
+      restaurantId: restaurantId,
+    });
+
+    // console.log(inventoryhistory);
+
+    //Whenever we want to send back JSON data
+    // console.log(inventoryhistory);
+    return res.json(200, {
+      message: "List of InventoryHistory",
+      inventoryhistory: inventoryhistory,
+    });
+  } catch (error) {}
 };
 
 module.exports.fetchReductionEstimate = async function (req, res) {

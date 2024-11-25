@@ -35,6 +35,7 @@ import Ratings from './Ratings'
 import Awareness from './Awareness'
 import CaloryDetector from './CaloryDetector'
 import HealthAdvisor from './HealthAdvisor'
+import UserMenu from './UserMenu'
 
 const PrivateRoute = (privateRouteProps) => {
     const { isLoggedIn, path, component: Component } = privateRouteProps
@@ -72,6 +73,7 @@ class App extends React.Component {
             this.props.dispatch(fetchJobs())
 
             if (user) {
+                console.log(user?._id)
                 this.props.dispatch(fetchMenus(user?._id))
             }
 
@@ -156,8 +158,13 @@ class App extends React.Component {
                             isLoggedIn={auth.isLoggedIn}
                         />
                         <PrivateRoute
-                            path="/menu"
+                            path="/create-menu"
                             component={Menu}
+                            isLoggedIn={auth.isLoggedIn}
+                        />
+                        <PrivateRoute
+                            path="/menu"
+                            component={UserMenu}
                             isLoggedIn={auth.isLoggedIn}
                         />
                         <PrivateRoute

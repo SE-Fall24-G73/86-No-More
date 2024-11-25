@@ -1,0 +1,102 @@
+/* UserMenu.css */
+
+.user-menu {
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Styles for filter section */
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.filter-input,
+.filter-select,
+.price-input {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.price-range-filter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.price-range-filter span {
+    white-space: nowrap;
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.menu-section {
+    flex: 0 0 70%;
+    max-width: 70%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.cart-section {
+    flex: 0 0 30%;
+    max-width: 30%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f8f9fa;
+}
+
+.cart-total {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.pay-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.pay-button:hover {
+    background-color: #0056b3;
+}
+
+.payment-input {
+    text-align: center;
+}
+
+.payment-input input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .content {
+        flex-direction: column;
+    }
+
+    .menu-section,
+    .cart-section {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
