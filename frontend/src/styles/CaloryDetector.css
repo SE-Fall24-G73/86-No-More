@@ -1,0 +1,109 @@
+.calory-detector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.upload-label {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.file-input {
+  border: 2px solid #007bff;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.image-preview {
+  max-width: 500px;
+  max-height: 400px;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.predict-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.predict-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.predict-button:hover:enabled {
+  background-color: #0056b3;
+}
+
+.results-container {
+  margin-top: 30px;
+  text-align: center;
+  width: 100%;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-gif {
+  width: 100px;
+  height: 100px;
+}
+
+.prediction-card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.total-calories {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.calory-items {
+  text-align: left;
+}
+
+.food-item {
+  font-size: 16px;
+  margin-bottom: 5px;
+}

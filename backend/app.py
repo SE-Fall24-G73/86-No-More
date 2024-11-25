@@ -17,7 +17,7 @@ genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 def upload_to_gemini(file_storage, mime_type=None):
     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        file_storage.save(tempfile.name)
+        file_storage.save(temp_file.name)
         file = genai.upload_file(temp_file.name, mime_type=mime_type)
     os.remove(temp_file.name)
     print(f"Uploaded the file '{file.display_name}' as: {file.uri}")
@@ -27,16 +27,16 @@ def upload_to_gemini(file_storage, mime_type=None):
 model = genai.GenerativeModel(
     model_name="gemini-1.5-pro",
     generation_config={
-        "temperature": 1,
+        "temperature": 0.1,
         "top_p": 0.95,
-        "top_k": 64,
+        "top_k": 32,
         "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
+        "response_mime_type": "application/json",
     },
 )
 
 
-@app.route("/generate", methods=["POST"])
+@app.route("/caloryDetector", methods=["POST"])
 def generate_response():
     image_file = request.files.get("image")
     mime_type = request.form.get("mimeType")
@@ -86,4 +86,4 @@ def generate_response():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
