@@ -1,4 +1,4 @@
-function generateEmail(
+function generateEmailForRating(
   restaurantName,
   userName,
   dishName,
