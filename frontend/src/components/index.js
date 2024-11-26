@@ -15,6 +15,8 @@ import Job1 from './Job1'
 import Cart from './Cart'
 import Ratings from './Ratings'
 import Awareness from './Awareness'
+import ForgotPassword from './ForgotPassword'
+import ResetPassword from './ResetPassword'
 export {
     Home,
     Page404,
@@ -24,6 +26,7 @@ export {
     Settings,
     Goal,
     History,
+    ForgotPassword,
     UserApplication,
     Update,
     Notification,
@@ -32,4 +35,5 @@ export {
     Job1,
     Ratings,
     Awareness,
+    ResetPassword
 }
