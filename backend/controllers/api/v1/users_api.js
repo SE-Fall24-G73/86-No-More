@@ -9,6 +9,17 @@ const Menu = require("../../../models/menu");
 const Inventoryhistory = require("../../../models/inventoryhistory");
 const Reduction = require("../../../models/reduction");
 var bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
 module.exports.createSession = async function (req, res) {
   try {
@@ -799,7 +810,15 @@ module.exports.acceptApplication = async function (req, res) {
 };
 
 module.exports.submitRating = async function (req, res) {
-  const { foodItemId, rating } = req.body;
+  const { foodItemId, rating, customerId } = req.body;
+
+  const customer = await User.findById(customerId);
+
+  if (!customer) {
+    return res.status(404).json({
+      message: "Customer not found",
+    });
+  }
 
   if (!foodItemId || typeof rating !== "number") {
     return res
@@ -829,6 +848,40 @@ module.exports.submitRating = async function (req, res) {
     );
 
     await menuItem.save();
+
+    const emailData = {
+      restaurantName: menuItem.restaurantName,
+      userName: customer.fullName,
+      dishName: menuItem.itemName,
+      rating: rating,
+      companyName: process.env.COMPANY_NAME || "86-NO-MORE",
+    };
+
+    const htmlContent = getEmailTemplate(emailData);
+
+    const restaurant = await User.findById(menuItem.restaurantId);
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Restaurant not found." });
+    }
+
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: restaurant.email,
+      subject: `New Rating for ${menuItem.itemName}`,
+      html: htmlContent,
+    });
+
+    console.log("Message sent: %s", info.messageId);
+
+    res.status(201).json({
+      success: true,
+      message: "Job selection email sent.",
+      data: info,
+      messageId: info.messageId,
+    });
 
     res.status(200).json({
       success: true,
