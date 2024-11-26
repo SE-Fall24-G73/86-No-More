@@ -85,6 +85,8 @@ const Menu = () => {
 
     const { error } = auth
 
+    const { error } = auth
+
     return (
         <div className="menu-container">
             <div className="menu-form">

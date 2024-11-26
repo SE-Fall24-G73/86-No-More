@@ -15,6 +15,7 @@ import {
 } from './actionTypes'
 import { getFormBody } from '../helpers/utils'
 import { getAuthTokenFromLocalStorage } from '../helpers/utils'
+import toast from 'react-hot-toast'
 // import { fetchUserFriends } from '../actions/friends';
 
 export function startLogin() {
@@ -65,20 +66,44 @@ export function login(email, password) {
     }
 }
 
-export function signup(email, password, confirmPassword, name, restname) {
+export function signup(
+    email,
+    password,
+    confirmPassword,
+    fullName,
+    restaurantName,
+    role
+) {
+    console.log(
+        email,
+        password,
+        confirmPassword,
+        fullName,
+        restaurantName,
+        role
+    )
     return (dispatch) => {
         const url = APIURLS.signup()
+        // console.log(
+        //     email,
+        //     password,
+        //     confirmPassword,
+        //     fullName,
+        //     restaurantName,
+        //     role
+        // )
         fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: getFormBody({
-                email,
-                password,
-                confirm_password: confirmPassword,
-                name,
-                restname,
+                email: email,
+                password: password,
+                confirmPassword: confirmPassword,
+                fullName: fullName,
+                restaurantName: restaurantName,
+                role: role,
             }),
         })
             .then((response) => response.json())
@@ -87,7 +112,12 @@ export function signup(email, password, confirmPassword, name, restname) {
                 if (data.success) {
                     // do something
                     localStorage.setItem('token', data.data.token)
+
+                    // console.log(data.data.user)
+
                     dispatch(signupSuccessful(data.data.user))
+
+                    toast.success('User signed up successfully!')
                     return
                 }
                 dispatch(signupFailed(data.message))

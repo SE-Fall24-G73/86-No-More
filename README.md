@@ -32,12 +32,13 @@
 <!--[Logo](https://user-images.githubusercontent.com/89487138/144724853-bd0d6f22-1a44-4dc3-afc4-6270b2bd3f36.jpg)
  
 ![1](https://user-images.githubusercontent.com/53376580/144174937-51c5d973-bf6e-4268-b048-0b4ea82f5c34.png)-->
+[![codecov](https://codecov.io/gh/SE-Fall24-G73/86-No-More/graph/badge.svg?token=V8M54MR7TH)](https://codecov.io/gh/SE-Fall24-G73/86-No-More)
 
 <hr>
 
 ## Demo Video
 
-https://youtu.be/WvsZH0xknUg
+<!-- https://youtu.be/WvsZH0xknUg -->
 
 ## 💎 About:
 "86-No-More is a culinary revolution that bids goodbye to the disappointment of unavailable menu items with the cutting-edge inventory tracker. It seamlessly anticipates ingredient shortages, empowering managers with insightful analytics, minimizing waste, and maximizing profits. With 86-No-More embrace innovation, eliminate shortages, and savor the taste of a more lucrative and long-lasting restaurant success!" This app allows you to:
@@ -90,8 +91,8 @@ Added test cases to increase code coverage.
  - Download and install [NodeJs](https://nodejs.org/en/download/) - Version: 7.0.2
  - Download the Allow CORS: Access-Control-Allow-Origin extension for Google Chrome - Version: 2.8.5
  - In the command prompt clone the frontend project using following commands:
-## `git clone https://github.com/nitin-dhevar/86-no-more-frontend`
-## `git clone https://github.com/nitin-dhevar/86-no-more-backend`
+## `git clone https://github.com/SE-Fall24-G73/86-No-More`
+- Navigate to the frontend and backend directories in separate terminals.
 - Then enter 'npm-install' 
  to install all the required dependencies in both the terminals. The dependencies have been mentioned in the 'package.json' file. If you want to check newer versions of dependencies use
 ## `npm-check-updates`

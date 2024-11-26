@@ -731,6 +731,7 @@ nav .right-nav span {
     border-radius: 10px;
 }
 
+
 .header__info {
     display: flex;
     align-items: center;
@@ -741,6 +742,7 @@ nav .right-nav span {
     display: flex;
     align-items: center;
 }
+
 
 .body__info {
     display: flex;

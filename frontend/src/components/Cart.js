@@ -62,7 +62,6 @@ class Cart extends Component {
         return (
             <div style={{ marginLeft: '100px' , display: 'block', alignItems:'center', justifyContent:'center' }}>
                 <h1>Menu and Cart</h1>
-                <br />
                 <div>
                     {menu?.map((menuItem) => (
                         <Job1
