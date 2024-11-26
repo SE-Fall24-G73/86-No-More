@@ -11,19 +11,10 @@ class Home extends Component {
             <div className="home-container">
                 <div className="container">
                     <div className="graf-bg-container">
-                        <div className="graf-layout">
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                            <div className="graf-circle"></div>
-                        </div>
+                    <img style={{width:'400px'}}
+                    src="/images/photo_86.png"
+                    alt="Home Banner"
+                />
                     </div>
                     <br />
                     <b className="home-subtitle">
