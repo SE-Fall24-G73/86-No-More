@@ -1,22 +1,26 @@
+// Cart.js
+
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Job1 from './Job1'
-import { fetchJobs, createMenu } from '../actions/job'
+import { fetchJobs } from '../actions/job'
 import { clearsearchstate } from '../actions/search'
+
 class Cart extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
-            restname: '',
-            restid: '',
-            menuname: '',
+            restaurantName: '',
+            restaurantId: '',
+            itemName: '',
             quantity: '0',
-            costmenu: '',
+            cost: '',
             cartTotal: 0,
             setInput: '0',
             cartChange: '0',
             editMode: false,
+            selectedItems: {}, // New state property to track selected items
         }
     }
 
@@ -26,15 +30,28 @@ class Cart extends Component {
         })
     }
 
-    handleCartTotal = (val) => {
-        this.setState({
-            ['cartTotal']: this.state.cartTotal + val,
-        })
+    handleCartTotal = (menuItemId, totalPrice) => {
+        this.setState(
+            (prevState) => ({
+                selectedItems: {
+                    ...prevState.selectedItems,
+                    [menuItemId]: totalPrice,
+                },
+            }),
+            () => {
+                // After updating selectedItems, recalculate cartTotal
+                const cartTotal = Object.values(
+                    this.state.selectedItems
+                ).reduce((acc, price) => acc + price, 0)
+                this.setState({ cartTotal })
+            }
+        )
     }
 
     componentDidMount() {
         this.props.dispatch(fetchJobs())
     }
+
     clearSearch = () => {
         this.props.dispatch(clearsearchstate([]))
         console.log('UNMOUNT')
@@ -42,26 +59,27 @@ class Cart extends Component {
 
     render() {
         const { menu } = this.props
-        {console.log('eeeeeee', menu)}
         return (
-            <div style={{ display: 'flex' }}>
+            <div style={{ marginLeft: '100px' , display: 'block', alignItems:'center', justifyContent:'center' }}>
                 <h1>Menu and Cart</h1>
-                <div style={{ marginLeft: '57px' }}>
-                    {menu?.map((menu) => (
+                <br />
+                <div>
+                    {menu?.map((menuItem) => (
                         <Job1
-                            menu={menu}
+                            key={menuItem._id}
+                            menu={menuItem}
                             handleCartTotal={this.handleCartTotal}
                         />
                     ))}
                 </div>
                 <div>
-                    <h1 style={{ marginLeft: '100px' }}>
+                    <h1 >
                         {' '}
                         Total: {this.state.cartTotal}
                     </h1>
                     <div>
                         <button
-                            style={{ marginLeft: '100px' }}
+                            style={{ width:'50%' }}
                             className="button delete-btn"
                             onClick={() => {
                                 this.handleInputChange('setInput', '1')
@@ -88,9 +106,9 @@ class Cart extends Component {
                                                 e.target.value
                                             )
                                         }}
-                                    ></input>
+                                    />
                                     <h3>
-                                        Get change :{' '}
+                                        Get change:{' '}
                                         {this.state.cartChange -
                                             this.state.cartTotal}
                                     </h3>
@@ -103,6 +121,7 @@ class Cart extends Component {
         )
     }
 }
+
 function mapStateToProps(state) {
     return {
         auth: state.auth,
@@ -111,4 +130,6 @@ function mapStateToProps(state) {
         menu: state.menu,
     }
 }
+
 export default connect(mapStateToProps)(Cart)
+
