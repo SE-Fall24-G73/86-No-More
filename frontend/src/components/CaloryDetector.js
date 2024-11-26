@@ -56,6 +56,8 @@ const CaloryDetector = () => {
                     data?.image_analysis?.total_calories || '0'
                 const weeklyMealPlan = data?.seven_day_meal_plan || {}
 
+                console.log(weeklyMealPlan)
+
                 if (!items.length) {
                     console.warn('No items found in image analysis.')
                 }
@@ -153,56 +155,25 @@ const CaloryDetector = () => {
                                                     <div className="meal-section">
                                                         <h4>Breakfast</h4>
                                                         <p>
-                                                            {meals.breakfast ||
+                                                            {meals.breakfast.name ||
                                                                 'N/A'}
                                                         </p>
                                                     </div>
                                                     <div className="meal-section">
                                                         <h4>Lunch</h4>
                                                         <p>
-                                                            {meals.lunch ||
+                                                            {meals.lunch.name ||
                                                                 'N/A'}
                                                         </p>
                                                     </div>
                                                     <div className="meal-section">
                                                         <h4>Dinner</h4>
                                                         <p>
-                                                            {meals.dinner ||
+                                                            {meals.dinner.name ||
                                                                 'N/A'}
                                                         </p>
                                                     </div>
-                                                    <div className="meal-section">
-                                                        <h4>Snacks</h4>
-                                                        {Array.isArray(
-                                                            meals.snacks
-                                                        ) &&
-                                                            meals.snacks.length >
-                                                            0 ? (
-                                                            <ul>
-                                                                {meals.snacks.map(
-                                                                    (
-                                                                        snack,
-                                                                        idx
-                                                                    ) => (
-                                                                        <li
-                                                                            key={
-                                                                                idx
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                snack
-                                                                            }
-                                                                        </li>
-                                                                    )
-                                                                )}
-                                                            </ul>
-                                                        ) : (
-                                                            <p>
-                                                                No snacks
-                                                                listed.
-                                                            </p>
-                                                        )}
-                                                    </div>
+                                                    
                                                 </div>
                                             )
                                         )

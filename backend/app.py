@@ -30,7 +30,7 @@ model = genai.GenerativeModel(
         "temperature": 0.1,
         "top_p": 0.95,
         "top_k": 32,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 10240,
         "response_mime_type": "application/json",
     },
 )
@@ -52,7 +52,7 @@ def generate_response():
         Your response must include the following elements:
         1. A detailed enumeration of each food item's caloric content as identified from the image.
         2. The aggregate caloric value of all the food items combined.
-        3. A seven-day well balanced meal plan that includes recommendations for breakfast, lunch, dinner, and two snacks for each day, designed to maintain a balanced diet.
+        3. A seven-day meal plan that includes recommendations for breakfast, lunch, dinner, and two snacks for each day, designed to maintain a balanced diet.
 
         Please ensure your response is formatted as structured JSON, adhering to the example format provided below. Note: The ellipsis ("...") symbol is used here to indicate continuation or the presence of additional items or days in the meal plan. These symbols should not be included in your actual JSON response. Ensure no markdown syntax (such as backticks) or additional characters that would invalidate the JSON format are included in your response.
 
@@ -64,11 +64,23 @@ def generate_response():
                 "items": [
                     {"name": "Item 1", "calories": "<number of calories>"},
                     {"name": "Item 2", "calories": "<number of calories>"}
-                ]
-            }
+                ],
+            },
+            "seven_day_meal_plan": {
+                "day1": {
+                    "breakfast": item,
+                    "lunch": item,
+                    "dinner": item,
+                    "snack": item,
+                },
+                .
+                .
+                .
+                "day7": ...
+            },
         }
 
-        Please replace placeholders (e.g., "<Total calculated calories>", "<meal suggestion>") with actual data values based on your analysis. The JSON response must be free of syntax errors and should not include characters or formatting that would prevent it from being parsed correctly as valid JSON.
+        Please replace placeholders (e.g., "<Total calculated calories>", "<meal suggestions>") with actual data values based on your analysis. The JSON response must be free of syntax errors and should not include characters or formatting that would prevent it from being parsed correctly as valid JSON.
     """
 
     chat_session = model.start_chat(
