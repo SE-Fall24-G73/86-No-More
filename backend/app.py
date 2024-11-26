@@ -64,23 +64,42 @@ def generate_response():
                 "items": [
                     {"name": "Item 1", "calories": "<number of calories>"},
                     {"name": "Item 2", "calories": "<number of calories>"}
-                ],
+                ]
             },
             "seven_day_meal_plan": {
                 "day1": {
-                    "breakfast": item,
-                    "lunch": item,
-                    "dinner": item,
-                    "snack": item,
+                    "breakfast": {
+                        "name": "<Meal Name>",
+                        "calories": <number of calories>
+                    },
+                    "lunch": {
+                        "name": "<Meal Name>",
+                        "calories": <number of calories>
+                    },
+                    "dinner": {
+                        "name": "<Meal Name>",
+                        "calories": <number of calories>
+                    },
+                    "snack1": {
+                        "name": "<Snack Name>",
+                        "calories": <number of calories>
+                    },
+                    "snack2": {
+                        "name": "<Snack Name>",
+                        "calories": <number of calories>
+                    }
                 },
-                .
-                .
-                .
-                "day7": ...
-            },
+                "day2": { ... },
+                "day3": { ... },
+                "day4": { ... },
+                "day5": { ... },
+                "day6": { ... },
+                "day7": { ... }
+            }
         }
 
-        Please replace placeholders (e.g., "<Total calculated calories>", "<meal suggestions>") with actual data values based on your analysis. The JSON response must be free of syntax errors and should not include characters or formatting that would prevent it from being parsed correctly as valid JSON.
+        Please replace placeholders (e.g., "<Total calculated calories>", "<Meal Name>", "<number of calories>") with actual data values based on your analysis. The JSON response must be free of syntax errors and should not include characters or formatting that would prevent it from being parsed correctly as valid JSON.
+
     """
 
     chat_session = model.start_chat(
