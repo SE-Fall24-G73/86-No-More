@@ -39,6 +39,18 @@ const menuSchema = new mongoose.Schema(
       ],
       required: true,
     },
+    numberOfRatings: {
+      type: Number,
+      default: 0,
+    },
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    totalRating: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
