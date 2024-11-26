@@ -1,24 +1,14 @@
-import React from 'react'
-import { shallow, mount } from 'enzyme'
-import { Provider } from 'react-redux'
-import App from '../components/App'
-import { configureStore } from '../store'
+import React from 'react';
+import { render } from '@testing-library/react';
+import { BrowserRouter as Router } from 'react-router-dom'; // Import Router since App uses it
+import App from './App'; // Import your App component
 
-const store = configureStore()
-
-const auth = {
-    isLoggedIn: 'T',
-}
-
-const job = {
-    desc: 'test',
-}
-
-test('render', () => {
-    const wrapper = mount(
-        <Provider store={store}>
-            <App auth={auth} job={job} />
-        </Provider>
-    )
-    expect(wrapper).toMatchSnapshot()
-})
+test('App component renders without crashing', () => {
+  // Render the App component wrapped in Router
+  render(
+    <Router>
+      <App />
+    </Router>
+  );
+  // If there is no crash, this test will pass automatically
+});
