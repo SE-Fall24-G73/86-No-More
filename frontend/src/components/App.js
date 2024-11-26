@@ -24,18 +24,20 @@ import {
     UserApplication,
     Update,
     Notification,
-    Menu,
+    Menu
 } from './'
 import PropTypes from 'prop-types'
 import { authenticateUser } from '../actions/auth'
 import { getAuthTokenFromLocalStorage } from '../helpers/utils'
 import { fetchJobs, fetchMenus } from '../actions/job'
 import Cart from './Cart'
+import ResetPassword from './ResetPassword'
 import Ratings from './Ratings'
 import Awareness from './Awareness'
 import CaloryDetector from './CaloryDetector'
 import HealthAdvisor from './HealthAdvisor'
 import UserMenu from './UserMenu'
+import ForgotPassword from './ForgotPassword'
 
 const PrivateRoute = (privateRouteProps) => {
     const { isLoggedIn, path, component: Component } = privateRouteProps
@@ -117,6 +119,8 @@ class App extends React.Component {
                         />
                         <Route path="/login" component={Login} />
                         <Route path="/signup" component={Signup} />
+                        <Route path="/forgotpassword" component={ForgotPassword} />
+                        <Route path="/resetpassword/:token" component={ResetPassword} />
                         <PrivateRoute
                             path="/settings"
                             component={Settings}
