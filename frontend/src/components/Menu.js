@@ -1,5 +1,3 @@
-// Menu.js
-
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Select from 'react-select'
@@ -88,16 +86,9 @@ const Menu = () => {
     const { error } = auth
 
     return (
-        <div>
-            <div
-                className="goal-form"
-                style={{
-                    width: '650px',
-                    height: '300px',
-                    marginLeft: '100px',
-                }}
-            >
-                <span className="login-signup-header">Add Menu Item</span>
+        <div className="menu-container">
+            <div className="menu-form">
+                <span className="menu-header">Add Menu Item</span>
                 {error && <div className="alert error-dailog">{error}</div>}
 
                 <div className="field">
