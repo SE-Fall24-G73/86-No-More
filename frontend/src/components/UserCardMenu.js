@@ -53,8 +53,8 @@ const UserCardMenu = (props) => {
                     <span>{menu.cost}</span>
                 </div>
                 <div className="card-row">
-                    <h4>Available Quantity:</h4>
-                    <span>{menu.quantity}</span>
+                    <h4>Ratings:</h4>
+                    <span>{menu.averageRating}</span>
                 </div>
                 <div className="card-row product-types">
                     <h4>Product Types:</h4>
