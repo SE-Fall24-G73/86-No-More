@@ -582,8 +582,6 @@ nav .right-nav span {
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
-    width: 50%;
-    margin-bottom: 10px;
 }
 .settings .go-back {
     color: gray;
@@ -1258,27 +1256,3 @@ nav .right-nav span {
 .field {
     margin-bottom: 15px;
 }
-
-.field input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.button {
-    width: 100%;
-    padding: 10px;
-    background-color: #e63946;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.button:hover {
-    background-color: #d62828;
-}
-
-
