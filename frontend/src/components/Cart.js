@@ -60,9 +60,9 @@ class Cart extends Component {
     render() {
         const { menu } = this.props
         return (
-            <div style={{ display: 'flex' }}>
+            <div style={{ marginLeft: '100px' , display: 'block', alignItems:'center', justifyContent:'center' }}>
                 <h1>Menu and Cart</h1>
-                <div style={{ marginLeft: '57px' }}>
+                <div>
                     {menu?.map((menuItem) => (
                         <Job1
                             key={menuItem._id}
@@ -72,13 +72,13 @@ class Cart extends Component {
                     ))}
                 </div>
                 <div>
-                    <h1 style={{ marginLeft: '100px' }}>
+                    <h1 >
                         {' '}
                         Total: {this.state.cartTotal}
                     </h1>
                     <div>
                         <button
-                            style={{ marginLeft: '100px' }}
+                            style={{ width:'50%' }}
                             className="button delete-btn"
                             onClick={() => {
                                 this.handleInputChange('setInput', '1')
@@ -131,3 +131,4 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Cart)
+
