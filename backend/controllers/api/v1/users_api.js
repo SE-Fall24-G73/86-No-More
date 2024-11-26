@@ -714,7 +714,6 @@ module.exports.resetReduction = async function (req, res) {
         total: 0,
       });
 
-      // Add each created menu to the results array
       resultsArray.push(reduction);
     }
 
@@ -796,6 +795,49 @@ module.exports.acceptApplication = async function (req, res) {
     return res.json(500, {
       message: "Internal Server Error",
     });
+  }
+};
+
+module.exports.submitRating = async function (req, res) {
+  const { foodItemId, rating } = req.body;
+
+  if (!foodItemId || typeof rating !== "number") {
+    return res
+      .status(400)
+      .json({ success: false, message: "foodItemId and rating are required." });
+  }
+
+  if (rating < 0.5 || rating > 5.0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Rating must be between 0.5 and 5.0." });
+  }
+
+  try {
+    const menuItem = await Menu.findById(foodItemId);
+
+    if (!menuItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Menu item not found." });
+    }
+
+    menuItem.totalRating += rating;
+    menuItem.numberOfRatings += 1;
+    menuItem.averageRating = parseFloat(
+      (menuItem.totalRating / menuItem.numberOfRatings).toFixed(2)
+    );
+
+    await menuItem.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Rating submitted successfully.",
+      averageRating: menuItem.averageRating,
+    });
+  } catch (error) {
+    console.error(`Error submitting rating: ${error.message}`);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 

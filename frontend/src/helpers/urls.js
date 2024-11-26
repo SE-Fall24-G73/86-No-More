@@ -12,6 +12,7 @@ export const APIURLS = {
 
     fetchMenus: () => `${API_ROOT}/users/fetchmenus`,
     fetchAllMenus: () => `${API_ROOT}/users/fetchallmenus`,
+    submitRating: () => `${API_ROOT}/users/submitrating`,
 
     createInventoryHistory: () => `${API_ROOT}/users/createinventoryHistory`,
 

@@ -1,0 +1,194 @@
+/* Ratings.css */
+
+/* Container for the entire Ratings component */
+.ratings-container {
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+/* Content wrapper to center the posts */
+.ratings-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Individual post/card styling */
+.post {
+    width: 50vw;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Header section within the post */
+.post-header {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Restaurant information section */
+.restaurant-info,
+.dish-info,
+.price-info {
+    display: flex;
+    align-items: center;
+}
+
+.label {
+    font-weight: bold;
+    margin-right: 10px;
+    width: 150px; /* Fixed width for labels for alignment */
+    color: #333;
+}
+
+.value {
+    color: #555;
+    flex: 1;
+    word-wrap: break-word;
+}
+
+/* Rating section containing the Rating component and Submit button */
+.rating-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.rating-component {
+    margin-right: 15px;
+}
+
+/* Submit button styling */
+.submit-button {
+    padding: 8px 16px;
+    font-size: 0.9em;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 80px;
+}
+
+.submit-button:hover:not(:disabled) {
+    background-color: #218838;
+}
+
+.submit-button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Dish information section */
+.dish-info {
+    display: flex;
+    align-items: center;
+}
+
+.dish-info .label {
+    width: 150px;
+}
+
+.dish-info .value {
+    flex: 1;
+}
+
+/* Price information section */
+.price-info {
+    display: flex;
+    align-items: center;
+}
+
+.price-info .label {
+    width: 150px;
+}
+
+.price-info .value {
+    flex: 1;
+}
+
+/* Responsive Design */
+
+/* Adjustments for tablets and smaller screens */
+@media (max-width: 768px) {
+    .post {
+        width: 90vw;
+        padding: 15px;
+    }
+
+    .label {
+        width: 130px;
+    }
+
+    .rating-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .submit-button {
+        margin-top: 10px;
+        width: 100%;
+    }
+}
+
+/* Adjustments for mobile devices */
+@media (max-width: 480px) {
+    .post {
+        width: 95vw;
+        padding: 10px;
+    }
+
+    .label {
+        width: 120px;
+        font-size: 0.9em;
+    }
+
+    .submit-button {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+}
+
+/* Additional Styling for Better Aesthetics */
+
+/* Smooth transitions for interactive elements */
+.post,
+.submit-button {
+    transition: all 0.3s ease;
+}
+
+/* Typography Enhancements */
+h4.label {
+    font-size: 1em;
+}
+
+span.value {
+    font-size: 0.95em;
+}
+
+/* Ensuring the Rating component aligns properly */
+.rating-component .MuiRating-iconFilled,
+.rating-component .MuiRating-iconHover {
+    color: #ffb400; /* Gold color for filled stars */
+}
+
+/* Button focus state for accessibility */
+.submit-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5);
+}
