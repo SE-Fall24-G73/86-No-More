@@ -24,6 +24,8 @@ router.post("/fetchmenus", usersApi.fetchMenu);
 router.post("/submitRating", usersApi.submitRating);
 router.get("/fetchallmenus", usersApi.fetchallmenus);
 router.post("/createinventoryHistory", usersApi.createInventoryHistory);
+router.post("/forgotpassword", usersApi.forgotPassword);
+router.post("/resetPassword", usersApi.resetPassword);
 // router.get("/fetchinventoryHistory", usersApi.fetchInventoryHistory);
 router.post("/fetchinventoryHistory", usersApi.fetchInventoryHistory);
 router.post("/deleteMenu", usersApi.deleteMenu);

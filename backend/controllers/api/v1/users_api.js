@@ -10,6 +10,7 @@ const Inventoryhistory = require("../../../models/inventoryhistory");
 const Reduction = require("../../../models/reduction");
 var bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -1005,4 +1006,96 @@ module.exports.closeJob = async function (req, res) {
       message: "Internal Server Error",
     });
   }
+};
+
+module.exports.forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  // console.log(email);
+  const user = await User.findOne({ email });
+
+  // console.log(user);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User Not Found",
+    });
+  }
+
+  const resetToken = await user.getResetToken();
+  // console.log(resetToken);
+
+  await user.save();
+
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+  const message = `
+      <h2>Password Reset Request</h2>
+      <p>We received a request to reset your password.</p>
+      <p>Click the link below to reset your password:</p>
+      <a href="${resetUrl}">Reset Password</a>
+      <p>If you did not request a password reset, please ignore this email.</p>
+    `;
+
+  // await sendEmail(user.email, "SkillShare Reset Password", message);
+
+  try {
+    // Send the email using Nodemailer transporter
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: email,
+      subject: "86-No-More Reset Password", // Email subject
+      html: message, // Email body (HTML)
+    });
+
+    console.log("Message sent: %s", info.messageId);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: `Reset Token has been sent to ${user.email}`,
+  });
+};
+
+module.exports.resetPassword = async (req, res) => {
+  const token = req.body.token;
+
+  // console.log(token);
+
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+  const expire = Date.now() + 15 * 60 * 1000;
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: {
+      $gt: Date.now(),
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Token",
+    });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+  user.password = hashedPassword;
+  user.resetPasswordExpire = undefined;
+  user.resetPasswordToken = undefined;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset Successfully",
+  });
 };

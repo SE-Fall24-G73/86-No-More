@@ -14,6 +14,8 @@ export const APIURLS = {
     fetchAllMenus: () => `${API_ROOT}/users/fetchallmenus`,
     submitRating: () => `${API_ROOT}/users/submitrating`,
 
+    forgotPassword: () => `${API_ROOT}/users/forgotpassword`,
+
     createInventoryHistory: () => `${API_ROOT}/users/createinventoryHistory`,
 
     fetchInventoryHistory: () => `${API_ROOT}/users/fetchinventoryHistory`,
