@@ -17,11 +17,11 @@
 ![last commit](https://img.shields.io/github/last-commit/SE-Fall24-G73/86-No-More)
 ![Lines of code](https://tokei.rs/b1/github/SE-Fall24-G73/86-No-More)
 [![Repo-size](https://img.shields.io/github/repo-size/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
-[![file_count](https://img.shields.io/github/directory-file-count/SE-Fall24-G73/86-No-More/)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
+[![file_count](https://img.shields.io/github/directory-file-count/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
 [![language_count](https://img.shields.io/github/languages/count/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
 [![Downloads](https://img.shields.io/github/downloads/SE-Fall24-G73/86-No-More/total)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
 [![Top Language](https://img.shields.io/github/languages/top/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
-[![DOI](https://zenodo.org/badge/882011816.svg)](https://doi.org/10.5281/zenodo.14027435)
+[![DOI](https://zenodo.org/badge/891052344.svg)](https://doi.org/10.5281/zenodo.14227023)
 [![Release](https://img.shields.io/github/v/release/SE-Fall24-G73/86-No-More)](https://gitHub.com/SE-Fall24-G73/86-No-More/)
 [![codecov](https://codecov.io/gh/SE-Fall24-G73/86-No-More/graph/badge.svg?token=V8M54MR7TH)](https://codecov.io/gh/SE-Fall24-G73/86-No-More)
 
@@ -61,10 +61,14 @@ https://user-images.githubusercontent.com/42051115/135004434-50d95b77-87a3-4c18-
 -   ![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
 -   ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 -   ![RestAPI](https://img.shields.io/badge/RestAPI-005571?style=for-the-badge&logo=restapi)
+-   ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 
  # ⭐ Whats New
 
-### Release Version 2.0.0 - 86-no-more
+### Release Version 3.0.2 - 86-No-More
+[![Release 3.0.2 Animated Video](https://img.youtube.com/vi/kby6Cvzs-8Y/maxresdefault.jpg)](https://youtu.be/kby6Cvzs-8Y)
+
+### Release Version 2.0.0 - 86-No-More
 - Ordering and pay page for customers
 - Option to choose the item from a list of items
 - Added metric data in inventory
