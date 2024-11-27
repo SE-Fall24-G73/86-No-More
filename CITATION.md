@@ -1,7 +1,7 @@
 ## Fall 2024 - Group 73 - Project 3
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5759097.svg)](https://doi.org/10.5281/zenodo.5759097)
+[![DOI](https://zenodo.org/badge/891052344.svg)](https://doi.org/10.5281/zenodo.14227023)
 
-<a href="https://doi.org/10.5281/zenodo.5759097">Zenodo DOI Link</a>
+<a href="https://doi.org/10.5281/zenodo.14227023">Zenodo DOI Link</a>
 
 Link to repository: https://github.com/SE-Fall24-G73/86-No-More/tree/master-fall24-g73
 
