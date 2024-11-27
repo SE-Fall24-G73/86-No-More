@@ -1063,7 +1063,7 @@ module.exports.forgotPassword = async (req, res) => {
 module.exports.resetPassword = async (req, res) => {
   const token = req.body.token;
 
-  console.log(token);
+  // console.log(token);
 
   const resetPasswordToken = crypto
     .createHash("sha256")
@@ -1078,7 +1078,7 @@ module.exports.resetPassword = async (req, res) => {
     },
   });
 
-  console.log(user);
+  // console.log(user);
 
   if (!user) {
     return res.status(400).json({
@@ -1093,7 +1093,7 @@ module.exports.resetPassword = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-  console.log(hashedPassword);
+  // console.log(hashedPassword);
 
   user.password = hashedPassword;
   user.resetPasswordExpire = undefined;
