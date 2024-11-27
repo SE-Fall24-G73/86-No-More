@@ -9,8 +9,8 @@
 <hr>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Frontend Tests](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/build-frontend-test-checker.yml/badge.svg)](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/frontend-test-checker.yml)
-[![Backend Tests](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/build-backend-test-checker.yml/badge.svg)](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/backend-test-checker.yml)
+[![Frontend Tests](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/frontend-test.yml/badge.svg)](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/frontend-test.yml)
+[![Backend Tests](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/backend-test.yml/badge.svg)](https://github.com/SE-Fall24-G73/86-No-More/actions/workflows/backend-test.yml)
 [![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
 [![Issues](https://img.shields.io/github/issues/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
 [![Issues Closed](https://img.shields.io/github/issues-closed/SE-Fall24-G73/86-No-More)](https://GitHub.com/SE-Fall24-G73/86-No-More/)
@@ -29,7 +29,7 @@
 
 ## Demo Video
 
-<!-- https://youtu.be/WvsZH0xknUg -->
+https://youtu.be/Ofqt7AOEkI0
 
 ## 💎 About:
 86-No-More is a culinary revolution that bids goodbye to the disappointment of unavailable menu items with the cutting-edge inventory tracker. It seamlessly anticipates ingredient shortages, empowering managers with insightful analytics, minimizing waste, and maximizing profits. With 86-No-More embrace innovation, eliminate shortages, and savor the taste of a more lucrative and long-lasting restaurant success!" This app allows you to:
