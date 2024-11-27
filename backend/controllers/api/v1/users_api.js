@@ -1027,7 +1027,7 @@ module.exports.forgotPassword = async (req, res) => {
 
   await user.save();
 
-  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+  const resetUrl = `${process.env.FRONTEND_URL}/resetpassword/${resetToken}`;
 
   const message = `
       <h2>Password Reset Request</h2>
