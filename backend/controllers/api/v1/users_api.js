@@ -9,6 +9,17 @@ const Menu = require("../../../models/menu");
 const Inventoryhistory = require("../../../models/inventoryhistory");
 const Reduction = require("../../../models/reduction");
 var bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 587,
+  secure: false, // true for port 465, false for other ports
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
 module.exports.createSession = async function (req, res) {
   try {
@@ -107,20 +118,8 @@ module.exports.signUp = async function (req, res) {
 
     User.findOne({ email: email }, async function (err, user) {
       if (user) {
-        // console.log(user);
-
-        return res.json(200, {
-          message: "Sign Up Successful, here is your token, plz keep it safe",
-
-          data: {
-            //user.JSON() part gets encrypted
-
-            token: jwt.sign(user.toJSON(), "caloriesapp", {
-              expiresIn: "100000",
-            }),
-            user,
-          },
-          success: true,
+        return res.json(422, {
+          message: "User already exists",
         });
       }
 
@@ -798,8 +797,84 @@ module.exports.acceptApplication = async function (req, res) {
   }
 };
 
+function generateEmailForRating({
+  restaurantName,
+  userName,
+  dishName,
+  rating,
+  comments,
+  companyName,
+}) {
+  return `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <title>New Rating Received</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          color: #333333;
+          padding: 20px;
+        }
+        .email-container {
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          border-bottom: 2px solid #28a745;
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+        }
+        .header h2 {
+          color: #28a745;
+        }
+        .content {
+          line-height: 1.6;
+        }
+        .footer {
+          margin-top: 30px;
+          font-size: 0.9em;
+          color: #777777;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <h2>New Rating Received</h2>
+        </div>
+        <div class="content">
+          <p>Dear <strong>${restaurantName}</strong>,</p>
+          <p>
+            User <strong>${userName}</strong> has rated your dish
+            <strong>${dishName}</strong> with <strong>${rating} stars</strong>.
+          </p>
+          ${comments ? `<p>Comments: "${comments}"</p>` : ""}
+          <p>Thank you for providing excellent service!</p>
+        </div>
+        <div class="footer">
+          <p>Best regards,<br />${companyName}</p>
+        </div>
+      </div>
+    </body>
+  </html>
+    `;
+}
+
 module.exports.submitRating = async function (req, res) {
-  const { foodItemId, rating } = req.body;
+  const { foodItemId, rating, customerId } = req.body;
+
+  const customer = await User.findById(customerId);
+
+  if (!customer) {
+    return res.status(404).json({
+      message: "Customer not found",
+    });
+  }
 
   if (!foodItemId || typeof rating !== "number") {
     return res
@@ -829,6 +904,37 @@ module.exports.submitRating = async function (req, res) {
     );
 
     await menuItem.save();
+
+    const emailData = {
+      restaurantName: menuItem.restaurantName,
+      userName: customer.fullName,
+      dishName: menuItem.itemName,
+      rating: rating,
+      companyName: process.env.COMPANY_NAME || "86-NO-MORE",
+    };
+
+    console.log(emailData);
+
+    const htmlContent = generateEmailForRating(emailData);
+
+    console.log(menuItem);
+
+    const restaurant = await User.findById(menuItem.restaurantId);
+
+    if (!restaurant) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Restaurant not found." });
+    }
+
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL,
+      to: restaurant.email,
+      subject: `New Rating for ${menuItem.itemName}`,
+      html: htmlContent,
+    });
+
+    console.log("Message sent: %s", info.messageId);
 
     res.status(200).json({
       success: true,

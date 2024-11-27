@@ -5,12 +5,14 @@ import '../styles/Ratings.css'
 import { APIURLS } from '../helpers/urls'
 import axios from 'axios'
 import toast from 'react-hot-toast'
+import auth from '../reducers/auth'
 
 const Ratings = () => {
     const [ratings, setRatings] = useState({})
     const [loadingStates, setLoadingStates] = useState({})
     const [menu, setMenu] = useState([])
     const [loading, setLoading] = useState(false)
+    const auth = useSelector((state) => state.auth)
 
     const fetchAllMenu = async () => {
         try {
@@ -37,6 +39,8 @@ const Ratings = () => {
         }))
     }
 
+    console.log('submit', auth.user)
+
     const handleSubmit = async (menuItemId) => {
         const ratingValue = ratings[menuItemId]
         if (!ratingValue) {
@@ -53,6 +57,7 @@ const Ratings = () => {
             const response = await axios.post(APIURLS.submitRating(), {
                 foodItemId: menuItemId,
                 rating: ratingValue,
+                customerId: auth.user._id,
             })
 
             toast.success('Rating submitted successfully!')
