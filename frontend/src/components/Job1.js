@@ -54,7 +54,7 @@ class Job1 extends Component {
                             {menu.restaurantName}
                         </span>
                         <button
-                            style={{ marginLeft: '300px' }}
+                            style={{ marginLeft: '200px' }}
                             className="button delete-btn"
                             onClick={() => this.deleteItem(menu.itemName)}
                         >
@@ -80,7 +80,7 @@ class Job1 extends Component {
                         </span>
                         <select
                             style={{
-                                marginLeft: '455px',
+                                marginLeft: '300px',
                                 width: '56px',
                                 height: '37px',
                                 padding: '5px',

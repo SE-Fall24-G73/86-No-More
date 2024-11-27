@@ -66,7 +66,7 @@ class Job extends Component {
                             </span>
                             <button
                                 style={{
-                                    marginLeft: '200px',
+                                    marginLeft: '10px',
                                     marginRight: '10px',
                                 }}
                                 className="button delete-btn"
