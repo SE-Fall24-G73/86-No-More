@@ -15,6 +15,7 @@ export const APIURLS = {
     submitRating: () => `${API_ROOT}/users/submitrating`,
 
     forgotPassword: () => `${API_ROOT}/users/forgotpassword`,
+    resetPassword: () => `${API_ROOT}/users/resetPassword`,
 
     createInventoryHistory: () => `${API_ROOT}/users/createinventoryHistory`,
 
