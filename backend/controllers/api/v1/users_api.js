@@ -53,8 +53,8 @@ module.exports.createSession = async function (req, res) {
     });
   } catch (err) {
     console.log("*******", err);
-    return res.json(500, {
-      message: "Internal Server Error",
+    return res.json(422, {
+      message: "Invalid username or password",
     });
   }
 };
